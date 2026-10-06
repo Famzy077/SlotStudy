@@ -7,7 +7,7 @@ import axios, {
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { ApiResponse } from '@/shared/types/api.types';
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://api.slotstudy.app';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://slotstudy.onrender.com/api/v1';
 
 const instance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
