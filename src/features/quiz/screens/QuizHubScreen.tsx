@@ -109,23 +109,21 @@ export default function QuizHubScreen({
             accessibilityRole="radio"
             accessibilityState={{ checked: mode === option }}
             onPress={() => setMode(option)}
-            className={`flex-1 rounded-xl px-3 py-3 ${
-              mode === option ? "bg-white shadow-sm dark:bg-slate-700" : ""
-            }`}
+            className={`flex-1 rounded-xl px-3 py-3 ${mode === option ? "bg-white shadow-sm dark:bg-slate-700" : ""
+              }`}
           >
             <Text
-              className={`text-center font-inter-semibold ${
-                mode === option
+              className={`text-center font-inter-semibold ${mode === option
                   ? "text-primary"
                   : "text-slate-600 dark:text-slate-300"
-              }`}
+                }`}
             >
               {option === "practice" ? "Practice" : "Test"}
             </Text>
             <Text className="mt-1 text-center text-xs text-slate-500 dark:text-slate-400">
               {option === "practice"
                 ? "See explanations as you go"
-                : "Review answers after submitting"}
+                : "Review answers"}
             </Text>
           </TouchableOpacity>
         ))}

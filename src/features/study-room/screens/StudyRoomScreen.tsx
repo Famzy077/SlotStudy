@@ -322,7 +322,7 @@ export default function StudyRoomScreen() {
         />
 
         {/* Bottom Input Bar */}
-        <View className="border-t border-slate-100 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
+        <View className="mb-10 border-t border-slate-100 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
           <View className="flex-row items-center gap-2">
             <View className="flex-1 flex-row items-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-1.5 dark:border-slate-800 dark:bg-slate-800/80">
               <TextInput
@@ -332,7 +332,7 @@ export default function StudyRoomScreen() {
                 onChangeText={setInputQuery}
                 multiline
                 style={{ maxHeight: 100 }}
-                className="flex-1 text-sm font-inter-regular text-slate-900 dark:text-slate-100"
+                className="flex-1 text-[15px] py-2 min-h-[36px] font-inter-regular text-slate-900 dark:text-slate-100"
               />
             </View>
 
