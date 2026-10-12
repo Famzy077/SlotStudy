@@ -276,7 +276,7 @@ export default function StudyRoomScreen() {
                 width: 260,
                 height: 180,
                 opacity: isDark ? 0.05 : 0.04,
-                tintColor: isDark ? '#000000' : '#0F172A',
+                // tintColor: isDark ? '#000000' : '#0F172A',
               }}
             />
           </View>
@@ -322,9 +322,9 @@ export default function StudyRoomScreen() {
                 {/* Starter prompts */}
                 <View className="w-full gap-2.5">
                   {[
-                    'What are the key themes and takeaways in this course material?',
-                    'Explain the most challenging concept from the course material.',
-                    'Can you list the key terms and their definitions?',
+                    // 'What are the key themes and takeaways in this course material?',
+                    // 'Explain the most challenging concept from the course material.',
+                    // 'Can you list the key terms and their definitions?',
                   ].map((prompt, idx) => (
                     <TouchableOpacity
                       key={idx}

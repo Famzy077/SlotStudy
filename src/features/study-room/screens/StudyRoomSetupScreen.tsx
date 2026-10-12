@@ -129,7 +129,7 @@ export default function StudyRoomSetupScreen() {
         {/* Step 1: Optional Course filter */}
         <View className="mb-6">
           <Text className="mb-3 text-sm font-inter-semibold text-slate-900 dark:text-slate-50">
-            1. Select Course (Optional)
+            1. Select Course
           </Text>
           {coursesLoading ? (
             <ActivityIndicator size="small" color={colors.primary} />
@@ -141,18 +141,16 @@ export default function StudyRoomSetupScreen() {
             >
               <TouchableOpacity
                 onPress={() => setSelectedCourseId(undefined)}
-                className={`rounded-2xl px-4 py-2.5 ${
-                  selectedCourseId === undefined
-                    ? 'bg-primary'
-                    : 'bg-slate-100 dark:bg-slate-800'
-                }`}
+                className={`rounded-2xl px-4 py-2.5 ${selectedCourseId === undefined
+                  ? 'bg-primary'
+                  : 'bg-slate-100 dark:bg-slate-800'
+                  }`}
               >
                 <Text
-                  className={`text-xs font-inter-medium ${
-                    selectedCourseId === undefined
-                      ? 'text-white'
-                      : 'text-slate-700 dark:text-slate-300'
-                  }`}
+                  className={`text-xs font-inter-medium ${selectedCourseId === undefined
+                    ? 'text-white'
+                    : 'text-slate-700 dark:text-slate-300'
+                    }`}
                 >
                   All Courses
                 </Text>
@@ -163,18 +161,16 @@ export default function StudyRoomSetupScreen() {
                   <TouchableOpacity
                     key={course.id}
                     onPress={() => setSelectedCourseId(course.id)}
-                    className={`rounded-2xl px-4 py-2.5 ${
-                      isSelected
-                        ? 'bg-primary'
-                        : 'bg-slate-100 dark:bg-slate-800'
-                    }`}
+                    className={`rounded-2xl px-4 py-2.5 ${isSelected
+                      ? 'bg-primary'
+                      : 'bg-slate-100 dark:bg-slate-800'
+                      }`}
                   >
                     <Text
-                      className={`text-xs font-inter-medium ${
-                        isSelected
-                          ? 'text-white'
-                          : 'text-slate-700 dark:text-slate-300'
-                      }`}
+                      className={`text-xs font-inter-medium ${isSelected
+                        ? 'text-white'
+                        : 'text-slate-700 dark:text-slate-300'
+                        }`}
                     >
                       {course.title}
                     </Text>
@@ -224,19 +220,17 @@ export default function StudyRoomSetupScreen() {
                     key={material.id}
                     activeOpacity={0.8}
                     onPress={() => toggleMaterial(material.id)}
-                    className={`flex-row items-center justify-between rounded-2xl border p-4 ${
-                      isSelected
-                        ? 'border-primary bg-primary/5 dark:bg-primary/10'
-                        : 'border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-800'
-                    }`}
+                    className={`flex-row items-center justify-between rounded-2xl border p-4 ${isSelected
+                      ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                      : 'border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-800'
+                      }`}
                   >
                     <View className="flex-1 flex-row items-center gap-3">
                       <View
-                        className={`h-10 w-10 items-center justify-center rounded-xl ${
-                          isSelected
-                            ? 'bg-primary'
-                            : 'bg-slate-100 dark:bg-slate-700'
-                        }`}
+                        className={`h-10 w-10 items-center justify-center rounded-xl ${isSelected
+                          ? 'bg-primary'
+                          : 'bg-slate-100 dark:bg-slate-700'
+                          }`}
                       >
                         <FileText
                           size={20}
@@ -257,11 +251,10 @@ export default function StudyRoomSetupScreen() {
                     </View>
 
                     <View
-                      className={`h-6 w-6 items-center justify-center rounded-full border ${
-                        isSelected
-                          ? 'border-primary bg-primary'
-                          : 'border-slate-300 dark:border-slate-600'
-                      }`}
+                      className={`h-6 w-6 items-center justify-center rounded-full border ${isSelected
+                        ? 'border-primary bg-primary'
+                        : 'border-slate-300 dark:border-slate-600'
+                        }`}
                     >
                       {isSelected && <Check size={14} color="#FFFFFF" />}
                     </View>
@@ -275,7 +268,7 @@ export default function StudyRoomSetupScreen() {
         {/* Step 3: Session Title */}
         <View className="mb-8">
           <Text className="mb-2 text-sm font-inter-semibold text-slate-900 dark:text-slate-50">
-            3. Session Name (Optional)
+            3. Session Name
           </Text>
           <TextInput
             placeholder="e.g. Chapter 4 Quiz Prep"
@@ -292,11 +285,10 @@ export default function StudyRoomSetupScreen() {
           activeOpacity={0.8}
           disabled={selectedMaterialIds.length === 0 || createSessionMutation.isPending}
           onPress={handleCreateSession}
-          className={`flex-row items-center justify-center gap-2 rounded-2xl py-4 shadow-sm ${
-            selectedMaterialIds.length === 0 || createSessionMutation.isPending
-              ? 'bg-slate-300 dark:bg-slate-700'
-              : 'bg-primary'
-          }`}
+          className={`flex-row items-center justify-center gap-2 rounded-2xl py-4 shadow-sm ${selectedMaterialIds.length === 0 || createSessionMutation.isPending
+            ? 'bg-slate-300 dark:bg-slate-700'
+            : 'bg-primary'
+            }`}
         >
           {createSessionMutation.isPending ? (
             <ActivityIndicator color="#FFFFFF" size="small" />
