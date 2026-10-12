@@ -14,7 +14,7 @@ const GreetingHeader = ({ greeting, name, username, avatarUrl }: Props) => {
   const navigation = useNavigation<any>();
 
   return (
-    <View className="flex-row items-center justify-between mb-6 px-6 pt-4">
+    <View className="flex-row items-center justify-between mb-14 px-6 pt-4">
       <View className="flex-row items-center">
         {avatarUrl ? (
           <Image source={{ uri: avatarUrl }} className="w-12 h-12 rounded-full mr-4" />

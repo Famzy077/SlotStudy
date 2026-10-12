@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Share } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Share2, CheckCircle, Copy } from 'lucide-react-native';
@@ -10,6 +10,7 @@ import { Badge } from '@/shared/components/ui/Badge';
 import { LoadingSkeleton } from '@/shared/components/ui/LoadingSkeleton';
 import { ErrorState } from '@/shared/components/feedback/ErrorState';
 import { AppAlert as Alert } from '@/shared/components/feedback/AppAlert';
+import { MarkdownRenderer } from '@/shared/components/markdown/MarkdownRenderer';
 import { useSummary, useGenerateQuiz } from '../hooks/useSummary';
 
 export default function AISummaryScreen() {
@@ -23,6 +24,17 @@ export default function AISummaryScreen() {
   const handleCopy = async (text: string) => {
     await Clipboard.setStringAsync(text);
     Alert.alert('Copied', 'Summary copied to clipboard');
+  };
+
+  const handleShare = async (title: string, content: string) => {
+    try {
+      await Share.share({
+        title,
+        message: `${title}\n\n${content}`,
+      });
+    } catch {
+      // Ignore share error
+    }
   };
 
   const handleGenerateQuiz = () => {
@@ -73,7 +85,12 @@ export default function AISummaryScreen() {
             <Text className="text-primary font-bold">Back</Text>
           </TouchableOpacity>
           <Text className="text-xl font-bold text-slate-900 dark:text-slate-50">AI Summary</Text>
-          <TouchableOpacity className="p-2">
+          <TouchableOpacity
+            onPress={() => handleShare(summary.title, summary.content)}
+            accessibilityRole="button"
+            accessibilityLabel="Share summary"
+            className="p-2"
+          >
             <Share2 size={24} className="text-slate-900 dark:text-slate-50" />
           </TouchableOpacity>
         </View>
@@ -97,9 +114,9 @@ export default function AISummaryScreen() {
                 <Text className="text-slate-500 text-sm ml-2">{summary.estimatedReadTime} min read</Text>
               </View>
 
-              <Text className="text-slate-900 dark:text-slate-50 text-base leading-relaxed mb-6">
-                {summary.content}
-              </Text>
+              <View className="mb-6">
+                <MarkdownRenderer content={summary.content} />
+              </View>
 
               <Text className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-4">Key Points</Text>
               {summary.keyPoints?.map((point, index) => (

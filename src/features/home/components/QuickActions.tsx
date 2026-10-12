@@ -54,7 +54,7 @@ const QuickActions = ({ actions }: Props) => {
   const navigation = useNavigation<any>();
 
   return (
-    <View className="px-6 mb-8">
+    <View className="px-6">
       <View className="flex-row flex-wrap justify-between gap-y-4">
         {actions.map((action) => {
           const config = configMap[action.icon] || {

@@ -162,9 +162,8 @@ const HomeScreen = () => {
             value={dashboard.examReadiness.overall}
             subtitle={
               dashboard.examReadiness.quizCount
-                ? `Based on ${dashboard.examReadiness.quizCount} completed ${
-                    dashboard.examReadiness.quizCount === 1 ? "quiz" : "quizzes"
-                  }`
+                ? `Based on ${dashboard.examReadiness.quizCount} completed ${dashboard.examReadiness.quizCount === 1 ? "quiz" : "quizzes"
+                }`
                 : "Take a practice quiz to start tracking your learning."
             }
           />
@@ -176,11 +175,10 @@ const HomeScreen = () => {
             >
               <Text className="font-semibold text-slate-900 dark:text-slate-50">
                 {Object.entries(dashboard.examReadiness.subjects).length
-                  ? `Next focus: ${
-                      Object.entries(dashboard.examReadiness.subjects).sort(
-                        ([, scoreA], [, scoreB]) => scoreA - scoreB,
-                      )[0][0]
-                    }`
+                  ? `Next focus: ${Object.entries(dashboard.examReadiness.subjects).sort(
+                    ([, scoreA], [, scoreB]) => scoreA - scoreB,
+                  )[0][0]
+                  }`
                   : "Keep practising to build a subject-level picture"}
               </Text>
               <Text className="mt-1 text-xs text-slate-600 dark:text-slate-300">
