@@ -11,6 +11,7 @@ import {
   FileText,
   ChevronRight,
   RefreshCw,
+  BookOpen,
 } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenWrapper } from "@/shared/components/layout/ScreenWrapper";
@@ -93,6 +94,27 @@ export default function AIHubScreen() {
         </View>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={() => navigation.navigate("StudyRoomSetup", {})}
+        activeOpacity={0.8}
+        className="mb-8 overflow-hidden rounded-3xl bg-indigo-600 shadow-sm"
+      >
+        <View className="flex-row items-center justify-between p-6">
+          <View className="flex-1 pr-3">
+            <View className="mb-3 h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+              <BookOpen size={24} color="#FFFFFF" />
+            </View>
+            <Text className="mb-1 text-xl font-inter-bold text-white">
+              AI Study Room
+            </Text>
+            <Text className="text-sm font-inter-medium text-white/80">
+              Chat with an AI tutor strictly grounded in your selected materials
+            </Text>
+          </View>
+          <Sparkles size={48} color="#FFFFFF" opacity={0.2} />
+        </View>
+      </TouchableOpacity>
+
       <View className="mb-4 flex-row items-center justify-between">
         <Text className="text-xl font-inter-semibold text-slate-900 dark:text-slate-50">
           Material processing
@@ -157,14 +179,18 @@ export default function AIHubScreen() {
                     {processing
                       ? "Generating your summary…"
                       : uploaded
-                        ? "Ready to process"
+                        ? "Ready for summary"
                         : "Processing failed. Your upload is saved."}
                   </Text>
                 </View>
                 {!processing && (
                   <TouchableOpacity
                     accessibilityRole="button"
-                    accessibilityLabel={`Retry processing ${material.fileName}`}
+                    accessibilityLabel={
+                      uploaded
+                        ? `Generate summary for ${material.fileName}`
+                        : `Retry processing ${material.fileName}`
+                    }
                     disabled={processMaterial.isPending}
                     onPress={() => retryProcessing(material.id)}
                     className="rounded-xl bg-primary px-3 py-2"
@@ -172,9 +198,9 @@ export default function AIHubScreen() {
                     <Text className="text-xs font-inter-semibold text-white">
                       {processMaterial.isPending &&
                       processMaterial.variables === material.id
-                        ? "Retrying…"
+                        ? "Generating…"
                         : uploaded
-                          ? "Process"
+                          ? "Generate Summary"
                           : "Retry"}
                     </Text>
                   </TouchableOpacity>

@@ -256,15 +256,7 @@ const CourseLibraryScreen = () => {
                   completedTopics={item.completedTopics}
                   lastAccessed={item.lastAccessed}
                   onPress={openCourseDetail}
-                />
-                <Button
-                  title="Upload material"
-                  size="sm"
-                  icon={<Upload size={15} color="#FFFFFF" />}
-                  onPress={openCourseUpload}
-                  className="mt-2"
-                  fullWidth
-                  accessibilityLabel={`Upload material to ${item.title}`}
+                  onUploadPress={openCourseUpload}
                 />
               </View>
             );

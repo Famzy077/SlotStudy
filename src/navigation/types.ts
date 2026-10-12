@@ -37,6 +37,9 @@ export type MainStackParamList = {
   Settings: undefined;
   HelpSupport: undefined;
   AcademicDetails: undefined;
+  StudyRoomSetup: { courseId?: string; materialId?: string } | undefined;
+  StudyRoom: { sessionId: string };
+  StudyRoomHistory: undefined;
 };
 
 // ── Root Stack ─────────────────────────────────────────────────────

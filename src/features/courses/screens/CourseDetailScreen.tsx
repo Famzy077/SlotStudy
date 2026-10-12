@@ -11,18 +11,23 @@ import {
   CalendarDays,
   FileText,
   Sparkles,
+  Plus,
+  Check,
+  Image as ImageIcon,
 } from "lucide-react-native";
 import { ScreenWrapper } from "@/shared/components/layout/ScreenWrapper";
 import { Button } from "@/shared/components/ui/Button";
+import { Badge } from "@/shared/components/ui/Badge";
 import { EmptyState } from "@/shared/components/feedback/EmptyState";
 import { ErrorState } from "@/shared/components/feedback/ErrorState";
 import { AppAlert as Alert } from "@/shared/components/feedback/AppAlert";
-import { useMaterials } from "@/features/ai/hooks/useUpload";
+import { useMaterials, useProcessMaterial } from "@/features/ai/hooks/useUpload";
 import {
   useGenerateQuiz,
   useRecentSummaries,
 } from "@/features/ai/hooks/useSummary";
 import { useCourse } from "../hooks/useCourses";
+import { formatFileSize, formatTimeAgo } from "@/shared/utils/formatters";
 import type { MainScreenProps } from "@/navigation/types";
 
 const formatDate = (date: string) => {
@@ -63,6 +68,7 @@ const CourseDetailScreen = ({
     refetch: refetchSummaries,
   } = useRecentSummaries(courseId);
   const generateQuiz = useGenerateQuiz();
+  const processMaterial = useProcessMaterial();
 
   if (courseLoading) {
     return (
@@ -106,6 +112,20 @@ const CourseDetailScreen = ({
 
   const openUpload = () =>
     navigation.navigate("UploadMaterial", { courseId: course.id });
+
+  const handleGenerateSummary = (materialId: string) => {
+    processMaterial.mutate(materialId, {
+      onSuccess: () => {
+        Alert.alert("Summary Generated", "Your study summary is ready.");
+      },
+      onError: (error) => {
+        Alert.alert(
+          "Summary generation failed",
+          error.message || "Please try again.",
+        );
+      },
+    });
+  };
 
   const handleGenerateQuiz = (summaryId: string) => {
     generateQuiz.mutate(
@@ -234,15 +254,27 @@ const CourseDetailScreen = ({
 
           <View className="mb-6">
             <View className="mb-3 flex-row items-center justify-between">
-              <Text className="text-xl font-inter-semibold text-slate-900 dark:text-slate-50">
-                Materials
-              </Text>
-              {!materialsLoading && !materialsError && (
-                <Text className="text-sm text-slate-500">
-                  {materials.length}
+              <View className="flex-row items-center">
+                <Text className="text-xl font-inter-semibold text-slate-900 dark:text-slate-50">
+                  Course Materials
                 </Text>
-              )}
+                {!materialsLoading && !materialsError && (
+                  <View className="ml-2.5 rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-0.5">
+                    <Text className="text-xs font-inter-semibold text-slate-600 dark:text-slate-300">
+                      {materials.length}
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <Button
+                title="Add Material"
+                size="sm"
+                icon={<Plus size={14} color="#FFFFFF" />}
+                onPress={openUpload}
+                accessibilityLabel={`Upload material to ${course.title}`}
+              />
             </View>
+
             {materialsLoading ? (
               <ActivityIndicator accessibilityLabel="Loading course materials" />
             ) : materialsError ? (
@@ -259,32 +291,155 @@ const CourseDetailScreen = ({
                 />
               </View>
             ) : materials.length ? (
-              materials.map((material) => (
-                <View
-                  key={material.id}
-                  className="mb-3 flex-row items-center rounded-2xl bg-white p-4 dark:bg-slate-800"
-                >
-                  <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/30">
-                    <FileText size={21} color="#2563EB" />
+              materials.map((material) => {
+                const isPdf =
+                  material.fileName?.toLowerCase().endsWith(".pdf") ||
+                  material.fileType === "application/pdf";
+                const isImg =
+                  material.fileType?.startsWith("image/") ||
+                  /\.(jpg|jpeg|png)$/i.test(material.fileName || "");
+                const isCompleted =
+                  material.status?.toUpperCase() === "COMPLETED";
+                const isProcessing =
+                  material.status?.toUpperCase() === "PROCESSING" ||
+                  (processMaterial.isPending &&
+                    processMaterial.variables === material.id);
+                const isFailed = material.status?.toUpperCase() === "FAILED";
+
+                return (
+                  <View
+                    key={material.id}
+                    className="mb-3.5 rounded-2xl bg-white dark:bg-slate-800 p-4 border border-slate-100/80 dark:border-slate-700/50 shadow-sm"
+                  >
+                    <View className="flex-row items-start justify-between">
+                      <View className="flex-row items-start flex-1 mr-2">
+                        <View
+                          className={`mr-3 h-10 w-10 items-center justify-center rounded-xl ${
+                            isPdf
+                              ? "bg-red-50 dark:bg-red-900/30"
+                              : isImg
+                                ? "bg-purple-50 dark:bg-purple-900/30"
+                                : "bg-primary-50 dark:bg-primary-900/30"
+                          }`}
+                        >
+                          {isPdf ? (
+                            <FileText size={20} color="#DC2626" />
+                          ) : isImg ? (
+                            <ImageIcon size={20} color="#9333EA" />
+                          ) : (
+                            <FileText size={20} color="#2563EB" />
+                          )}
+                        </View>
+                        <View className="flex-1">
+                          <Text
+                            className="font-inter-semibold text-slate-900 dark:text-slate-50 text-sm leading-5"
+                            numberOfLines={2}
+                          >
+                            {material.fileName}
+                          </Text>
+                          <Text className="mt-0.5 text-xs font-inter-regular text-slate-500">
+                            {formatFileSize(material.fileSize)} •{" "}
+                            {formatTimeAgo(material.createdAt)}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View>
+                        {isCompleted ? (
+                          <Badge
+                            label="Summary Ready"
+                            variant="success"
+                            icon={<Check size={12} color="#16A34A" />}
+                          />
+                        ) : isProcessing ? (
+                          <Badge label="Generating..." variant="primary" />
+                        ) : isFailed ? (
+                          <Badge label="Failed" variant="error" />
+                        ) : (
+                          <Badge label="Uploaded" variant="neutral" />
+                        )}
+                      </View>
+                    </View>
+
+                    {/* Action buttons per material */}
+                    <View className="mt-3.5 flex-row gap-2 border-t border-slate-100 dark:border-slate-700/60 pt-3">
+                      {isCompleted ? (
+                        <>
+                          <Button
+                            title="View Summary"
+                            variant="secondary"
+                            size="sm"
+                            className="flex-1"
+                            onPress={() =>
+                              navigation.navigate("AISummary", {
+                                materialId: material.id,
+                              })
+                            }
+                          />
+                          <Button
+                            title="AI Study Room"
+                            size="sm"
+                            variant="outline"
+                            icon={<BookOpen size={14} color="#2563EB" />}
+                            className="flex-1"
+                            onPress={() =>
+                              navigation.navigate("StudyRoomSetup", {
+                                materialId: material.id,
+                                courseId: course.id,
+                              })
+                            }
+                          />
+                        </>
+                      ) : isProcessing ? (
+                        <View className="flex-1 flex-row items-center justify-center py-1">
+                          <ActivityIndicator size="small" color="#2563EB" />
+                          <Text className="ml-2 text-xs font-inter-medium text-slate-500">
+                            Generating AI summary...
+                          </Text>
+                        </View>
+                      ) : (
+                        <>
+                          <Button
+                            title={
+                              isFailed
+                                ? "Retry Summary"
+                                : "Generate Summary"
+                            }
+                            size="sm"
+                            variant={isFailed ? "outline" : "primary"}
+                            icon={<Sparkles size={14} color="#FFFFFF" />}
+                            className="flex-1"
+                            loading={
+                              processMaterial.isPending &&
+                              processMaterial.variables === material.id
+                            }
+                            disabled={processMaterial.isPending}
+                            onPress={() => handleGenerateSummary(material.id)}
+                          />
+                          <Button
+                            title="AI Study Room"
+                            size="sm"
+                            variant="outline"
+                            icon={<BookOpen size={14} color="#2563EB" />}
+                            className="flex-1"
+                            onPress={() =>
+                              navigation.navigate("StudyRoomSetup", {
+                                materialId: material.id,
+                                courseId: course.id,
+                              })
+                            }
+                          />
+                        </>
+                      )}
+                    </View>
                   </View>
-                  <View className="flex-1">
-                    <Text
-                      className="font-inter-semibold text-slate-900 dark:text-slate-50"
-                      numberOfLines={2}
-                    >
-                      {material.fileName}
-                    </Text>
-                    <Text className="mt-1 text-sm text-slate-500">
-                      {material.status.toLowerCase()}
-                    </Text>
-                  </View>
-                </View>
-              ))
+                );
+              })
             ) : (
               <View className="rounded-3xl bg-white dark:bg-slate-800">
                 <EmptyState
-                  title="No materials yet"
-                  message="Upload notes or a document to add study material to this course."
+                  title="No materials uploaded yet"
+                  message="Upload lecture notes, slides, or chapters to study with AI."
                   icon={<FileText size={36} color="#64748B" />}
                   actionLabel="Upload material"
                   onAction={openUpload}

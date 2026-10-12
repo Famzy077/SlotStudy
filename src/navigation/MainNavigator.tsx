@@ -14,6 +14,9 @@ import SubscriptionScreen from "@/features/subscription/screens/SubscriptionScre
 import SettingsScreen from "@/features/settings/screens/SettingsScreen";
 import HelpSupportScreen from "@/features/profile/screens/HelpSupportScreen";
 import AcademicSetupScreen from "@/features/auth/screens/AcademicSetupScreen";
+import StudyRoomSetupScreen from "@/features/study-room/screens/StudyRoomSetupScreen";
+import StudyRoomScreen from "@/features/study-room/screens/StudyRoomScreen";
+import StudyRoomHistoryScreen from "@/features/study-room/screens/StudyRoomHistoryScreen";
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -45,6 +48,9 @@ export function MainNavigator() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
       <Stack.Screen name="AcademicDetails" component={AcademicSetupScreen} />
+      <Stack.Screen name="StudyRoomSetup" component={StudyRoomSetupScreen} />
+      <Stack.Screen name="StudyRoom" component={StudyRoomScreen} />
+      <Stack.Screen name="StudyRoomHistory" component={StudyRoomHistoryScreen} />
     </Stack.Navigator>
   );
 }
