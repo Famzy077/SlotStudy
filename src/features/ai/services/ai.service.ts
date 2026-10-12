@@ -48,7 +48,7 @@ class AIService {
 
   async getMaterials(courseId?: string): Promise<ApiResponse<Material[]>> {
     const response = await apiClient.get<ApiResponse<Material[]>>(
-      ENDPOINTS.UPLOAD,
+      ENDPOINTS.MATERIALS,
       {
         params: { courseId },
       },

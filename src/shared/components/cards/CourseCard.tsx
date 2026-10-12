@@ -16,7 +16,6 @@ interface CourseCardProps {
   totalTopics: number;
   completedTopics: number;
   onPress: (id: string) => void;
-  onUploadPress?: (id: string) => void;
   index?: number;
   className?: string;
 }
@@ -30,7 +29,6 @@ export function CourseCard({
   totalTopics,
   completedTopics,
   onPress,
-  onUploadPress,
   index = 0,
   className,
 }: CourseCardProps) {
@@ -64,7 +62,9 @@ export function CourseCard({
         </Text>
 
         <Text className="mb-2.5 text-[11px] font-inter-regular text-slate-500 dark:text-slate-400">
-          {completedTopics}/{totalTopics} materials
+          {totalTopics === 0
+            ? "No materials yet"
+            : `${totalTopics} material${totalTopics === 1 ? "" : "s"}`}
         </Text>
 
         {/* Progress bar */}
@@ -92,21 +92,6 @@ export function CourseCard({
             </View>
           ) : null}
         </View>
-
-        {onUploadPress ? (
-          <TouchableOpacity
-            onPress={() => onUploadPress(id)}
-            accessibilityRole="button"
-            accessibilityLabel={`Upload material to ${title}`}
-            activeOpacity={0.8}
-            className="mt-3 flex-row items-center justify-center rounded-xl bg-primary/10 py-1.5 dark:bg-primary/20"
-          >
-            <Upload size={12} color={colors.primary} />
-            <Text className="ml-1 text-[11px] font-inter-semibold text-primary">
-              + Upload
-            </Text>
-          </TouchableOpacity>
-        ) : null}
       </TouchableOpacity>
     </Animated.View>
   );

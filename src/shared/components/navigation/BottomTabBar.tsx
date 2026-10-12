@@ -39,7 +39,7 @@ function TabButton({ label, isFocused, onPress, onLongPress, iconKey }: TabButto
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(0.92, { damping: 15, stiffness: 400 });
   };
 
   const handlePressOut = () => {
@@ -53,29 +53,23 @@ function TabButton({ label, isFocused, onPress, onLongPress, iconKey }: TabButto
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       activeOpacity={0.7}
-      className="flex-1 items-center justify-center py-1"
+      className="flex-1 items-center justify-center py-1.5"
     >
       <Animated.View style={animatedStyle} className="items-center">
-        <View
-          className={clsx(
-            'mb-1 items-center justify-center rounded-2xl',
-            isFocused
-              ? 'h-10 w-12 bg-primary-100 dark:bg-primary-900/40'
-              : 'h-10 w-12',
-          )}
-        >
+        <View className="mb-1 items-center justify-center">
           <Icon
             size={22}
-            color={isFocused ? colors.primary : colors.textSecondary}
+            color={isFocused ? colors.primary : '#94A3B8'}
+            strokeWidth={isFocused ? 2.3 : 1.8}
             fill={isFocused && iconKey === 'Home' ? colors.primary : 'none'}
           />
         </View>
         <Text
           className={clsx(
-            'text-xs',
+            'text-[11px]',
             isFocused
               ? 'font-inter-semibold text-primary dark:text-primary-400'
-              : 'font-inter-medium text-slate-500 dark:text-slate-400',
+              : 'font-inter-medium text-slate-400 dark:text-slate-500',
           )}
         >
           {label}
@@ -90,10 +84,13 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
   return (
     <View
-      className="border-t border-slate-100 bg-white dark:border-slate-700 dark:bg-slate-900"
-      style={{ paddingBottom: Math.max(insets.bottom, 8) }}
+      className="border-t border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900"
+      style={{
+        paddingTop: 6,
+        paddingBottom: Math.max(insets.bottom, 8),
+      }}
     >
-      <View className="mx-4 mt-1 flex-row rounded-3xl bg-slate-50 px-2 py-1 dark:bg-slate-800">
+      <View className="flex-row items-center justify-around px-2">
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const label =

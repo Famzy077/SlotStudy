@@ -17,7 +17,7 @@ import { useDebounce } from "@/shared/hooks/useDebounce"; // Assuming useDebounc
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@/shared/components/ui/Button";
 import { AppAlert as Alert } from "@/shared/components/feedback/AppAlert";
-import { Plus, Upload } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { MainStackParamList } from "@/navigation/types";
 
@@ -89,27 +89,26 @@ const CourseLibraryScreen = () => {
     <ScreenWrapper className="flex-1 bg-surface dark:bg-slate-900">
       <View className="px-6 pt-4 pb-2">
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            My Courses
-          </Text>
-          <View className="flex-row">
-            <Button
-              title="New course"
-              size="sm"
-              variant="secondary"
-              icon={<Plus size={16} color="#2563EB" />}
-              onPress={() => setShowCourseForm((visible) => !visible)}
-              accessibilityLabel="Create a course"
-              className="mr-2"
-            />
-            <Button
-              title="Upload"
-              size="sm"
-              icon={<Upload size={16} color="#FFFFFF" />}
-              onPress={() => navigation.navigate("UploadMaterial", {})}
-              accessibilityLabel="Upload course material"
-            />
+          <View>
+            <Text className="text-2xl font-inter-bold text-slate-900 dark:text-slate-50">
+              My Courses
+            </Text>
+            <Text className="text-xs font-inter-regular text-slate-500 mt-0.5">
+              {courses.length} enrolled {courses.length === 1 ? "course" : "courses"}
+            </Text>
           </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Create a new course"
+            onPress={() => setShowCourseForm((visible) => !visible)}
+            className="flex-row items-center rounded-2xl bg-primary px-3.5 py-2 shadow-sm"
+            activeOpacity={0.8}
+          >
+            <Plus size={16} color="#FFFFFF" />
+            <Text className="ml-1.5 text-xs font-inter-semibold text-white">
+              New Course
+            </Text>
+          </TouchableOpacity>
         </View>
         {showCourseForm ? (
           <View
@@ -242,8 +241,6 @@ const CourseLibraryScreen = () => {
           renderItem={({ item }) => {
             const openCourseDetail = (courseId: string) =>
               navigation.navigate("CourseDetail", { courseId });
-            const openCourseUpload = () =>
-              navigation.navigate("UploadMaterial", { courseId: item.id });
 
             return (
               <View className="w-[48%]">
@@ -256,7 +253,6 @@ const CourseLibraryScreen = () => {
                   completedTopics={item.completedTopics}
                   lastAccessed={item.lastAccessed}
                   onPress={openCourseDetail}
-                  onUploadPress={openCourseUpload}
                 />
               </View>
             );

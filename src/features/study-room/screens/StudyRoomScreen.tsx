@@ -150,12 +150,12 @@ export default function StudyRoomScreen() {
             prev.map((m) =>
               m.id === tempAssistantMessage.id
                 ? {
-                    ...m,
-                    content:
-                      accumulatedContent ||
-                      'Could not generate an answer from the selected study materials. Please try again.',
-                    status: 'FAILED',
-                  }
+                  ...m,
+                  content:
+                    accumulatedContent ||
+                    'Could not generate an answer from the selected study materials. Please try again.',
+                  status: 'FAILED',
+                }
                 : m,
             ),
           );
@@ -301,8 +301,8 @@ export default function StudyRoomScreen() {
               {/* Starter prompts */}
               <View className="w-full gap-2.5">
                 {[
-                  'What are the key themes and takeaways in this material?',
-                  'Explain the most challenging concept from the document.',
+                  'What are the key themes and takeaways in this course material?',
+                  'Explain the most challenging concept from the course material.',
                   'Can you list the key terms and their definitions?',
                 ].map((prompt, idx) => (
                   <TouchableOpacity
@@ -348,11 +348,10 @@ export default function StudyRoomScreen() {
               }}
               accessibilityRole="button"
               accessibilityLabel={isListening ? "Stop voice listening" : "Dictate question"}
-              className={`h-11 w-11 items-center justify-center rounded-2xl ${
-                isListening
-                  ? 'bg-red-500'
-                  : 'bg-slate-100 dark:bg-slate-800'
-              }`}
+              className={`h-11 w-11 items-center justify-center rounded-2xl ${isListening
+                ? 'bg-red-500'
+                : 'bg-slate-100 dark:bg-slate-800'
+                }`}
             >
               {isListening ? (
                 <MicOff size={18} color="#FFFFFF" />
@@ -376,9 +375,8 @@ export default function StudyRoomScreen() {
                 disabled={!inputQuery.trim()}
                 accessibilityRole="button"
                 accessibilityLabel="Send question"
-                className={`h-11 w-11 items-center justify-center rounded-2xl ${
-                  inputQuery.trim() ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'
-                }`}
+                className={`h-11 w-11 items-center justify-center rounded-2xl ${inputQuery.trim() ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'
+                  }`}
               >
                 <Send
                   size={18}
