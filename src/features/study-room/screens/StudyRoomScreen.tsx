@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {
   ChevronLeft,
@@ -37,7 +38,7 @@ export default function StudyRoomScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<RouteProp<MainStackParamList, 'StudyRoom'>>();
   const sessionId = route.params.sessionId;
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   const { data: sessionResponse, isLoading, refetch } = useStudySession(sessionId);
   const session = sessionResponse?.data;
@@ -260,66 +261,87 @@ export default function StudyRoomScreen() {
           )}
         </View>
 
-        {/* Message Feed */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-            paddingBottom: 24,
-            flexGrow: 1,
-          }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => (
-            <ChatMessageBubble
-              message={item}
-              isStreaming={
-                isGenerating &&
-                index === messages.length - 1 &&
-                item.role === 'ASSISTANT'
-              }
-              onPressSources={handleOpenSources}
-              onRetry={() => handleSendMessage(item.content)}
-              onSpeak={() => speakText(item.content, item.id)}
-              isSpeaking={activeSpeechId === item.id}
+        {/* Chat Feed Area with SlotStudy Watermark */}
+        <View className="relative flex-1">
+          {/* Subtle Dark Background Watermark */}
+          <View
+            pointerEvents="none"
+            className="absolute inset-0 items-center justify-center"
+            style={{ zIndex: 0 }}
+          >
+            <Image
+              source={require('../../../../assets/images/logo.png')}
+              resizeMode="contain"
+              style={{
+                width: 260,
+                height: 180,
+                opacity: isDark ? 0.05 : 0.04,
+                tintColor: isDark ? '#000000' : '#0F172A',
+              }}
             />
-          )}
-          ListEmptyComponent={
-            <View className="flex-1 items-center justify-center px-4 py-12">
-              <View className="mb-4 h-16 w-16 items-center justify-center rounded-3xl bg-blue-50 dark:bg-blue-900/40">
-                <Sparkles size={32} color={colors.primary} />
-              </View>
-              <Text className="mb-1 text-center text-xl font-inter-bold text-slate-900 dark:text-slate-50">
-                Your AI Study Room is Ready
-              </Text>
-              <Text className="mb-8 text-center text-xs font-inter-regular leading-relaxed text-slate-500">
-                Ask questions about your uploaded lecture materials. Answers will cite verified page and section excerpts.
-              </Text>
+          </View>
 
-              {/* Starter prompts */}
-              <View className="w-full gap-2.5">
-                {[
-                  'What are the key themes and takeaways in this course material?',
-                  'Explain the most challenging concept from the course material.',
-                  'Can you list the key terms and their definitions?',
-                ].map((prompt, idx) => (
-                  <TouchableOpacity
-                    key={idx}
-                    activeOpacity={0.7}
-                    onPress={() => handleSendMessage(prompt)}
-                    className="rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm dark:border-slate-800 dark:bg-slate-800/80"
-                  >
-                    <Text className="text-xs font-inter-medium text-slate-700 dark:text-slate-200">
-                      💡 "{prompt}"
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+          {/* Message Feed */}
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingTop: 16,
+              paddingBottom: 24,
+              flexGrow: 1,
+            }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <ChatMessageBubble
+                message={item}
+                isStreaming={
+                  isGenerating &&
+                  index === messages.length - 1 &&
+                  item.role === 'ASSISTANT'
+                }
+                onPressSources={handleOpenSources}
+                onRetry={() => handleSendMessage(item.content)}
+                onSpeak={() => speakText(item.content, item.id)}
+                isSpeaking={activeSpeechId === item.id}
+              />
+            )}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center px-4 py-12">
+                <View className="mb-4 h-16 w-16 items-center justify-center rounded-3xl bg-blue-50 dark:bg-blue-900/40">
+                  <Sparkles size={32} color={colors.primary} />
+                </View>
+                <Text className="mb-1 text-center text-xl font-inter-bold text-slate-900 dark:text-slate-50">
+                  Your AI Study Room is Ready
+                </Text>
+                <Text className="mb-8 text-center text-xs font-inter-regular leading-relaxed text-slate-500">
+                  Ask questions about your uploaded lecture materials. Answers will cite verified page and section excerpts.
+                </Text>
+
+                {/* Starter prompts */}
+                <View className="w-full gap-2.5">
+                  {[
+                    'What are the key themes and takeaways in this course material?',
+                    'Explain the most challenging concept from the course material.',
+                    'Can you list the key terms and their definitions?',
+                  ].map((prompt, idx) => (
+                    <TouchableOpacity
+                      key={idx}
+                      activeOpacity={0.7}
+                      onPress={() => handleSendMessage(prompt)}
+                      className="rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm dark:border-slate-800 dark:bg-slate-800/80"
+                    >
+                      <Text className="text-xs font-inter-medium text-slate-700 dark:text-slate-200">
+                        💡 "{prompt}"
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-            </View>
-          }
-        />
+            }
+          />
+        </View>
 
         {/* Bottom Input Bar */}
         <View className="mb-10 border-t border-slate-100 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
