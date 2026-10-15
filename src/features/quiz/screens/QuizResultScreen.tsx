@@ -108,7 +108,7 @@ export default function QuizResultScreen({
             <ProgressCard value={accuracy} title="Accuracy" size="lg" />
             <View className="absolute items-center justify-center">
               <Text className="text-4xl font-bold text-slate-900 dark:text-slate-50">
-                {result.score}
+                {/* {result.score} */}
               </Text>
               <Text className="text-slate-500">Points</Text>
             </View>

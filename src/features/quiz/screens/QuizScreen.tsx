@@ -210,12 +210,12 @@ export default function QuizScreen({
           </View>
 
           {isRevealed && !isTestMode && (
-            <Animated.View
+            <Animated.View 
               entering={SlideInUp}
               className="bg-white dark:bg-slate-800 rounded-3xl p-6 mb-8 border border-slate-100 dark:border-slate-700"
             >
-              <Text className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-2">
-                Explanation
+              <Text className="text-lg font-bold text-slate-900 dark:text-slate-50">
+                Explanation 
               </Text>
               <Text className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 {currentQ.explanation}
