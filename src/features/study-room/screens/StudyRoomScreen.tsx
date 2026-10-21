@@ -19,20 +19,29 @@ import {
   Info,
   Mic,
   MicOff,
+  Radio,
 } from 'lucide-react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { ScreenWrapper } from '@/shared/components/layout/ScreenWrapper';
+import { AppAlert } from '@/shared/components/feedback/AppAlert';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { useStudySession } from '../hooks/useStudyRoom';
 import { useVoiceInteraction } from '../hooks/useVoiceInteraction';
 import { studyRoomApi } from '../services/study-room.api';
 import { ChatMessageBubble } from '../components/ChatMessageBubble';
 import { SourceCitationModal } from '../components/SourceCitationModal';
+import { LiveStudyStreamModal } from '../components/LiveStudyStreamModal';
 import {
   StudyMessage,
   SourceCitation,
 } from '../types/study-room.types';
 import type { MainStackParamList } from '@/navigation/types';
+
+/**
+ * Set to `false` while testing Live AI Stream.
+ * Set to `true` after testing so clicking the Live button shows "Live stream is coming soon".
+ */
+const LIVE_STREAM_COMING_SOON = true;
 
 export default function StudyRoomScreen() {
   const navigation = useNavigation<any>();
@@ -49,11 +58,14 @@ export default function StudyRoomScreen() {
   const [activeSources, setActiveSources] = useState<SourceCitation[]>([]);
   const [sourcesModalVisible, setSourcesModalVisible] = useState(false);
   const [showMaterialSheet, setShowMaterialSheet] = useState(false);
+  const [liveStreamModalVisible, setLiveStreamModalVisible] = useState(false);
 
   const {
+    isSpeaking,
     isListening,
     activeSpeechId,
     speakText,
+    stopSpeaking,
     startListening,
     stopListening,
   } = useVoiceInteraction();
@@ -77,7 +89,18 @@ export default function StudyRoomScreen() {
     }
   }, [messages.length, isGenerating]);
 
-  const handleSendMessage = async (textToSend?: string) => {
+  const handlePressLiveStream = () => {
+    if (LIVE_STREAM_COMING_SOON) {
+      AppAlert.alert(
+        'Live Stream Coming Soon 🎙️',
+        'Live voice streaming with your SlotStudy AI study buddy is coming soon! Stay tuned.',
+      );
+      return;
+    }
+    setLiveStreamModalVisible(true);
+  };
+
+  const handleSendMessage = async (textToSend?: string, autoSpeak = false) => {
     const query = (textToSend ?? inputQuery).trim();
     if (!query || isGenerating) return;
 
@@ -88,7 +111,7 @@ export default function StudyRoomScreen() {
       role: 'USER',
       content: query,
       status: 'COMPLETED',
-      inputMode: 'TEXT',
+      inputMode: autoSpeak ? 'VOICE' : 'TEXT',
       createdAt: new Date().toISOString(),
     };
 
@@ -99,7 +122,7 @@ export default function StudyRoomScreen() {
       content: '',
       sources: null,
       status: 'PENDING',
-      inputMode: 'TEXT',
+      inputMode: autoSpeak ? 'VOICE' : 'TEXT',
       createdAt: new Date().toISOString(),
     };
 
@@ -113,7 +136,7 @@ export default function StudyRoomScreen() {
 
     await studyRoomApi.streamMessage(
       sessionId,
-      { content: query },
+      { content: query, inputMode: autoSpeak ? 'VOICE' : 'TEXT' },
       {
         onUserMessage: (confirmedMsg) => {
           setMessages((prev) =>
@@ -145,6 +168,9 @@ export default function StudyRoomScreen() {
           );
           setIsGenerating(false);
           abortControllerRef.current = null;
+          if (autoSpeak && finalMsg?.content) {
+            speakText(finalMsg.content, finalMsg.id);
+          }
         },
         onError: (err) => {
           setMessages((prev) =>
@@ -195,6 +221,9 @@ export default function StudyRoomScreen() {
   }
 
   const materialsList = session?.materials.map((m) => m.material) ?? [];
+  const latestAssistantMsg = [...messages]
+    .reverse()
+    .find((m) => m.role === 'ASSISTANT');
 
   return (
     <ScreenWrapper scroll={false} padded={false}>
@@ -232,14 +261,41 @@ export default function StudyRoomScreen() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              onPress={() => setShowMaterialSheet((v) => !v)}
-              className="h-9 w-9 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/40"
-              accessibilityRole="button"
-              accessibilityLabel="Selected materials information"
-            >
-              <Info size={18} color={colors.primary} />
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-2">
+              <TouchableOpacity
+                onPress={handlePressLiveStream}
+                accessibilityRole="button"
+                accessibilityLabel="Live stream with AI"
+                className={`flex-row items-center gap-1.5 rounded-full px-3 py-1.5 ${
+                  LIVE_STREAM_COMING_SOON
+                    ? 'bg-slate-100 dark:bg-slate-800'
+                    : 'bg-emerald-500/15 border border-emerald-500/30'
+                }`}
+              >
+                <Radio
+                  size={15}
+                  color={LIVE_STREAM_COMING_SOON ? '#64748B' : '#10B981'}
+                />
+                <Text
+                  className={`text-xs font-inter-bold ${
+                    LIVE_STREAM_COMING_SOON
+                      ? 'text-slate-500 dark:text-slate-400'
+                      : 'text-emerald-600 dark:text-emerald-400'
+                  }`}
+                >
+                  Live
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setShowMaterialSheet((v) => !v)}
+                className="h-9 w-9 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/40"
+                accessibilityRole="button"
+                accessibilityLabel="Selected materials information"
+              >
+                <Info size={18} color={colors.primary} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Quick materials list accordion if toggled */}
@@ -276,7 +332,6 @@ export default function StudyRoomScreen() {
                 width: 260,
                 height: 180,
                 opacity: isDark ? 0.05 : 0.04,
-                // tintColor: isDark ? '#000000' : '#0F172A',
               }}
             />
           </View>
@@ -316,15 +371,15 @@ export default function StudyRoomScreen() {
                   Your AI Study Room is Ready
                 </Text>
                 <Text className="mb-8 text-center text-xs font-inter-regular leading-relaxed text-slate-500">
-                  Ask questions about your uploaded lecture materials. Answers will cite verified page and section excerpts.
+                  Chat in English or Nigerian Pidgin! Your AI study buddy will break down your materials with cited sources.
                 </Text>
 
                 {/* Starter prompts */}
                 <View className="w-full gap-2.5">
                   {[
-                    // 'What are the key themes and takeaways in this course material?',
-                    // 'Explain the most challenging concept from the course material.',
-                    // 'Can you list the key terms and their definitions?',
+                    'Abeg senior man, break down the main gist of this handout for me!',
+                    'Explain the most challenging concept here with a relatable example.',
+                    'Can you list the key terms and definitions from this material?',
                   ].map((prompt, idx) => (
                     <TouchableOpacity
                       key={idx}
@@ -348,7 +403,7 @@ export default function StudyRoomScreen() {
           <View className="flex-row items-center gap-2">
             <View className="flex-1 flex-row items-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-1.5 dark:border-slate-800 dark:bg-slate-800/80">
               <TextInput
-                placeholder="Ask about your study material..."
+                placeholder="Ask in English or Pidgin..."
                 placeholderTextColor="#94A3B8"
                 value={inputQuery}
                 onChangeText={setInputQuery}
@@ -414,6 +469,22 @@ export default function StudyRoomScreen() {
           visible={sourcesModalVisible}
           onClose={() => setSourcesModalVisible(false)}
           sources={activeSources}
+        />
+
+        {/* Live AI Stream Modal */}
+        <LiveStudyStreamModal
+          visible={liveStreamModalVisible}
+          sessionTitle={session?.title || 'AI Study Room'}
+          isGenerating={isGenerating}
+          isSpeaking={isSpeaking}
+          isListening={isListening}
+          latestAssistantText={latestAssistantMsg?.content ?? ''}
+          onClose={() => setLiveStreamModalVisible(false)}
+          onSendLivePrompt={(prompt) => handleSendMessage(prompt, true)}
+          onStartListening={startListening}
+          onStopListening={stopListening}
+          onStopSpeaking={stopSpeaking}
+          onStopGenerating={handleStopGeneration}
         />
       </KeyboardAvoidingView>
     </ScreenWrapper>

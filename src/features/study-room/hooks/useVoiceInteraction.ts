@@ -3,14 +3,14 @@ import { Platform } from 'react-native';
 import * as Speech from 'expo-speech';
 
 /**
- * Strip markdown syntax, citations, and symbols so TTS reads clean, natural speech
+ * Strip markdown syntax, citations, emojis, and symbols so TTS reads clean, natural speech
  */
 export function cleanMarkdownForSpeech(text: string): string {
   if (!text) return '';
   return text
     // Replace code blocks with brief note
     .replace(/```[\s\S]*?```/g, ' code snippet. ')
-    // Strip source citations like [Source 1], [Source 2, 3]
+    // Strip source citations like [Source 1], [Source 2, Page 3]
     .replace(/\[(?:Source|Sources)\s*[^\]]*\]/gi, '')
     // Strip markdown links [text](url) -> keep text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
@@ -31,6 +31,8 @@ export function cleanMarkdownForSpeech(text: string): string {
     .replace(/^\s*(\d+)\.\s+/gm, '$1. ')
     // Strip horizontal rules (---, ***, ___)
     .replace(/^[-*_]{3,}\s*$/gm, '')
+    // Strip emojis so TTS doesn't read out emoji descriptions
+    .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     // Collapse excess whitespace and newlines into natural pauses
     .replace(/\n{2,}/g, '. ')
     .replace(/\n/g, ' ')
@@ -42,9 +44,40 @@ export function useVoiceInteraction() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [activeSpeechId, setActiveSpeechId] = useState<string | null>(null);
+  const preferredVoiceRef = useRef<{ language: string; voice?: string }>({
+    language: 'en-NG',
+  });
 
   // Web Speech API references if running in web/hybrid environment
   const recognitionRef = useRef<any>(null);
+
+  // Discover Nigerian English (en-NG) voice on device if installed, else fallback to en
+  useEffect(() => {
+    let mounted = true;
+    Speech.getAvailableVoicesAsync()
+      .then((voices) => {
+        if (!mounted || !voices?.length) return;
+        const ngVoice = voices.find((v) =>
+          v.language?.toLowerCase().includes('en-ng') ||
+          v.identifier?.toLowerCase().includes('en-ng') ||
+          v.identifier?.toLowerCase().includes('en_ng'),
+        );
+        if (ngVoice) {
+          preferredVoiceRef.current = {
+            language: ngVoice.language || 'en-NG',
+            voice: ngVoice.identifier,
+          };
+        } else {
+          preferredVoiceRef.current = { language: 'en' };
+        }
+      })
+      .catch(() => {
+        preferredVoiceRef.current = { language: 'en' };
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Stop speaking
   const stopSpeaking = useCallback(async () => {
@@ -91,9 +124,12 @@ export function useVoiceInteraction() {
 
       try {
         Speech.speak(cleanSpeechText, {
-          language: 'en',
+          language: preferredVoiceRef.current.language,
+          ...(preferredVoiceRef.current.voice
+            ? { voice: preferredVoiceRef.current.voice }
+            : {}),
           pitch: 1.0,
-          rate: 0.95,
+          rate: 0.96,
           onStart: () => {
             setIsSpeaking(true);
             setActiveSpeechId(messageId);
