@@ -20,6 +20,10 @@ export const Colors = {
     overlay: 'rgba(0, 0, 0, 0.5)',
     tabBar: '#FFFFFF',
     tabBarBorder: '#F1F5F9',
+    aiAccent: '#4F46E5',
+    aiAccentLight: '#EEF2FF',
+    streakOrange: '#F97316',
+    xpGold: '#F59E0B',
   },
   dark: {
     primary: '#3B82F6',
@@ -42,6 +46,10 @@ export const Colors = {
     overlay: 'rgba(0, 0, 0, 0.7)',
     tabBar: '#1E293B',
     tabBarBorder: '#334155',
+    aiAccent: '#6366F1',
+    aiAccentLight: '#1E1B4B',
+    streakOrange: '#FB923C',
+    xpGold: '#FBBF24',
   },
 } as const;
 

@@ -89,22 +89,28 @@ export default function StudyRoomSetupScreen() {
       <View className="flex-row items-center justify-between border-b border-slate-100 px-6 pb-4 pt-2 dark:border-slate-800">
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+          className="flex-row items-center gap-1 rounded-full bg-slate-100 px-3 py-2 dark:bg-slate-800"
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ChevronLeft size={22} color="#64748B" />
+          <ChevronLeft size={18} color="#64748B" />
+          <Text className="text-xs font-inter-bold text-slate-700 dark:text-slate-200">
+            Back
+          </Text>
         </TouchableOpacity>
-        <Text className="text-lg font-inter-bold text-slate-900 dark:text-slate-50">
+        <Text className="text-base font-inter-bold text-slate-900 dark:text-slate-50">
           New AI Study Room
         </Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('StudyRoomHistory')}
-          className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+          className="flex-row items-center gap-1.5 rounded-full bg-blue-50 px-3 py-2 dark:bg-blue-900/40"
           accessibilityRole="button"
-          accessibilityLabel="Session history"
+          accessibilityLabel="Past study chats"
         >
-          <History size={20} color={colors.primary} />
+          <History size={15} color={colors.primary} />
+          <Text className="text-xs font-inter-bold text-primary">
+            Past Chats
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -122,7 +128,7 @@ export default function StudyRoomSetupScreen() {
             </Text>
           </View>
           <Text className="mt-1.5 text-xs font-inter-regular leading-relaxed text-slate-600 dark:text-slate-300">
-            Answers are restricted solely to the materials you select below. No outside guesses or web hallucinations.
+            Answers are restricted solely to the materials you select below. Chat in English or Nigerian Pidgin!
           </Text>
         </View>
 
@@ -187,9 +193,29 @@ export default function StudyRoomSetupScreen() {
             <Text className="text-sm font-inter-semibold text-slate-900 dark:text-slate-50">
               2. Select Study Materials *
             </Text>
-            <Text className="text-xs font-inter-medium text-primary">
-              {selectedMaterialIds.length} selected
-            </Text>
+            <View className="flex-row items-center gap-3">
+              {materials.length > 1 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    if (selectedMaterialIds.length === materials.length) {
+                      setSelectedMaterialIds([]);
+                    } else {
+                      setSelectedMaterialIds(materials.map((m) => m.id));
+                    }
+                  }}
+                  className="rounded-lg bg-blue-50 px-2.5 py-1 dark:bg-blue-900/30"
+                >
+                  <Text className="text-xs font-inter-bold text-primary">
+                    {selectedMaterialIds.length === materials.length
+                      ? 'Clear All'
+                      : 'Select All'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <Text className="text-xs font-inter-medium text-slate-500">
+                {selectedMaterialIds.length} selected
+              </Text>
+            </View>
           </View>
 
           {materialsLoading ? (

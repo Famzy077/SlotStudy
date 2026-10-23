@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   FileUp,
   Sparkles,
@@ -75,45 +76,83 @@ export default function AIHubScreen() {
 
       <TouchableOpacity
         onPress={() => navigation.navigate("UploadMaterial", {})}
-        activeOpacity={0.8}
-        className="mb-8 overflow-hidden rounded-3xl bg-primary"
+        activeOpacity={0.85}
+        className="mb-5 overflow-hidden rounded-3xl shadow-sm"
       >
-        <View className="flex-row items-center justify-between p-6">
-          <View className="flex-1">
-            <View className="mb-3 h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
-              <FileUp size={24} color="#FFFFFF" />
+        <LinearGradient
+          colors={["#2563EB", "#1D4ED8"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ padding: 24 }}
+        >
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1">
+              <View className="mb-3 h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+                <FileUp size={24} color="#FFFFFF" />
+              </View>
+              <Text className="mb-1 text-xl font-inter-bold text-white">
+                Upload New Material
+              </Text>
+              <Text className="text-sm font-inter-medium text-white/85">
+                PDF, JPG, PNG images • Instant AI summary
+              </Text>
             </View>
-            <Text className="mb-1 text-xl font-inter-bold text-white">
-              Upload New Material
-            </Text>
-            <Text className="text-sm font-inter-medium text-white/80">
-              PDF, JPG, PNG images
-            </Text>
+            <Sparkles size={48} color="#FFFFFF" opacity={0.22} />
           </View>
-          <Sparkles size={48} color="#FFFFFF" opacity={0.2} />
-        </View>
+        </LinearGradient>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate("StudyRoomSetup", {})}
-        activeOpacity={0.8}
-        className="mb-8 overflow-hidden rounded-3xl bg-indigo-600 shadow-sm"
-      >
-        <View className="flex-row items-center justify-between p-6">
-          <View className="flex-1 pr-3">
-            <View className="mb-3 h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
-              <BookOpen size={24} color="#FFFFFF" />
+      <View className="mb-8 overflow-hidden rounded-3xl shadow-sm">
+        <LinearGradient
+          colors={["#4F46E5", "#7C3AED"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ padding: 24 }}
+        >
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-3">
+              <View className="mb-3 flex-row items-center gap-2.5">
+                <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+                  <BookOpen size={24} color="#FFFFFF" />
+                </View>
+                <View className="rounded-full bg-white/20 px-2.5 py-1">
+                  <Text className="text-[10px] font-inter-bold tracking-wider text-white">
+                    🇳🇬 PIDGIN & ENGLISH
+                  </Text>
+                </View>
+              </View>
+              <Text className="mb-1 text-xl font-inter-bold text-white">
+                AI Study Room
+              </Text>
+              <Text className="text-sm font-inter-medium text-white/85">
+                Chat in English or Pidgin with your AI study buddy grounded in your handouts
+              </Text>
             </View>
-            <Text className="mb-1 text-xl font-inter-bold text-white">
-              AI Study Room
-            </Text>
-            <Text className="text-sm font-inter-medium text-white/80">
-              Chat with an AI tutor strictly grounded in your selected materials
-            </Text>
+            <Sparkles size={48} color="#FFFFFF" opacity={0.22} />
           </View>
-          <Sparkles size={48} color="#FFFFFF" opacity={0.2} />
-        </View>
-      </TouchableOpacity>
+
+          <View className="mt-4 flex-row gap-3">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("StudyRoomSetup", {})}
+              activeOpacity={0.85}
+              className="flex-1 items-center justify-center rounded-2xl bg-white py-3"
+            >
+              <Text className="text-xs font-inter-bold text-indigo-700">
+                + Start New Session
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("StudyRoomHistory")}
+              activeOpacity={0.85}
+              className="flex-1 items-center justify-center rounded-2xl border border-white/30 bg-white/15 py-3"
+            >
+              <Text className="text-xs font-inter-bold text-white">
+                Past Study Chats
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      </View>
 
       <View className="mb-4 flex-row items-center justify-between">
         <Text className="text-xl font-inter-semibold text-slate-900 dark:text-slate-50">
@@ -123,7 +162,7 @@ export default function AIHubScreen() {
           accessibilityRole="button"
           accessibilityLabel="Refresh material status"
           onPress={() => refetchMaterials()}
-          className="h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-slate-800"
+          className="h-9 w-9 items-center justify-center rounded-full border border-slate-200/70 bg-white dark:border-slate-700/60 dark:bg-slate-800"
         >
           <RefreshCw size={17} color={colors.primary} />
         </TouchableOpacity>
@@ -153,7 +192,7 @@ export default function AIHubScreen() {
             return (
               <View
                 key={material.id}
-                className="mb-3 flex-row items-center rounded-2xl bg-white p-4 dark:bg-slate-800"
+                className="mb-3 flex-row items-center rounded-2xl border border-slate-200/70 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800"
               >
                 <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/30">
                   {processing ? (
@@ -245,16 +284,16 @@ export default function AIHubScreen() {
                 materialId: summary.materialId,
               })
             }
-            className="mb-4 flex-row items-center rounded-2xl bg-white p-4 dark:bg-slate-800"
+            className="mb-3.5 flex-row items-center rounded-2xl border border-slate-200/70 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800"
           >
-            <View className="mr-4 h-12 w-12 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/30">
-              <FileText size={24} color={colors.primary} />
+            <View className="mr-4 h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30">
+              <FileText size={24} color="#4F46E5" />
             </View>
             <View className="flex-1">
-              <Text className="text-base font-inter-medium text-slate-900 dark:text-slate-50">
+              <Text className="text-base font-inter-semibold text-slate-900 dark:text-slate-50">
                 {summary.title}
               </Text>
-              <Text className="text-sm font-inter-regular text-slate-500">
+              <Text className="mt-0.5 text-sm font-inter-regular text-slate-500">
                 {summary.difficulty.toLowerCase()} • {summary.estimatedReadTime}{" "}
                 min read
               </Text>

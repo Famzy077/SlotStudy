@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  ScrollView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
@@ -42,6 +43,25 @@ import type { MainStackParamList } from '@/navigation/types';
  * Set to `true` after testing so clicking the Live button shows "Live stream is coming soon".
  */
 const LIVE_STREAM_COMING_SOON = true;
+
+const QUICK_ACTION_CHIPS = [
+  {
+    label: '🇳🇬 Explain in Pidgin',
+    prompt: 'Abeg break down this concept for me in Nigerian Pidgin!',
+  },
+  {
+    label: '💡 Naija Analogy',
+    prompt: 'Give me a relatable everyday Nigerian analogy for this topic.',
+  },
+  {
+    label: '🎯 Quiz Me',
+    prompt: 'Test my brain with one quick exam question from this material!',
+  },
+  {
+    label: '📝 Key Takeaways',
+    prompt: 'What are the top exam takeaways I must remember from this material?',
+  },
+];
 
 export default function StudyRoomScreen() {
   const navigation = useNavigation<any>();
@@ -238,9 +258,12 @@ export default function StudyRoomScreen() {
               onPress={() => navigation.goBack()}
               accessibilityRole="button"
               accessibilityLabel="Back"
-              className="h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+              className="flex-row items-center gap-1 rounded-full bg-slate-100 px-3 py-2 dark:bg-slate-800"
             >
-              <ChevronLeft size={22} color="#64748B" />
+              <ChevronLeft size={18} color="#64748B" />
+              <Text className="text-xs font-inter-bold text-slate-700 dark:text-slate-200">
+                Back
+              </Text>
             </TouchableOpacity>
 
             <View className="flex-1 px-3">
@@ -268,22 +291,22 @@ export default function StudyRoomScreen() {
                 accessibilityLabel="Live stream with AI"
                 className={`flex-row items-center gap-1.5 rounded-full px-3 py-1.5 ${
                   LIVE_STREAM_COMING_SOON
-                    ? 'bg-slate-100 dark:bg-slate-800'
-                    : 'bg-emerald-500/15 border border-emerald-500/30'
+                    ? 'border border-amber-500/30 bg-amber-500/10'
+                    : 'border border-emerald-500/30 bg-emerald-500/15'
                 }`}
               >
                 <Radio
-                  size={15}
-                  color={LIVE_STREAM_COMING_SOON ? '#64748B' : '#10B981'}
+                  size={14}
+                  color={LIVE_STREAM_COMING_SOON ? '#F59E0B' : '#10B981'}
                 />
                 <Text
                   className={`text-xs font-inter-bold ${
                     LIVE_STREAM_COMING_SOON
-                      ? 'text-slate-500 dark:text-slate-400'
+                      ? 'text-amber-600 dark:text-amber-400'
                       : 'text-emerald-600 dark:text-emerald-400'
                   }`}
                 >
-                  Live
+                  {LIVE_STREAM_COMING_SOON ? 'Live • Soon' : 'Live'}
                 </Text>
               </TouchableOpacity>
 
@@ -398,8 +421,28 @@ export default function StudyRoomScreen() {
           />
         </View>
 
-        {/* Bottom Input Bar */}
-        <View className="mb-10 border-t border-slate-100 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
+        {/* Bottom Input Bar + Quick Action Chips */}
+        <View className="mb-10 border-t border-slate-100 bg-white pt-2.5 pb-3.5 px-3.5 dark:border-slate-800 dark:bg-slate-900">
+          {/* 1-Tap Quick Action Chips */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8, paddingBottom: 10 }}
+          >
+            {QUICK_ACTION_CHIPS.map((chip, idx) => (
+              <TouchableOpacity
+                key={idx}
+                disabled={isGenerating}
+                onPress={() => handleSendMessage(chip.prompt)}
+                className="rounded-full border border-blue-200 bg-blue-50/70 px-3 py-1.5 dark:border-slate-700 dark:bg-slate-800"
+              >
+                <Text className="text-xs font-inter-semibold text-primary dark:text-blue-400">
+                  {chip.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
           <View className="flex-row items-center gap-2">
             <View className="flex-1 flex-row items-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-1.5 dark:border-slate-800 dark:bg-slate-800/80">
               <TextInput

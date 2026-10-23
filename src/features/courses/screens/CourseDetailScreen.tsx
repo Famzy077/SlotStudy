@@ -9,7 +9,9 @@ import {
 import {
   BookOpen,
   CalendarDays,
+  ChevronLeft,
   FileText,
+  MessageSquare,
   Sparkles,
   Plus,
   Check,
@@ -157,14 +159,17 @@ const CourseDetailScreen = ({
   return (
     <ScreenWrapper padded={false}>
       <View className="flex-1 bg-surface dark:bg-slate-900">
-        <View className="flex-row items-center border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+        <View className="flex-row items-center border-b border-slate-100 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Go back to courses"
             onPress={() => navigation.goBack()}
-            className="mr-3 rounded-xl px-3 py-2"
+            className="mr-3 flex-row items-center gap-1 rounded-full bg-slate-100 px-3 py-2 dark:bg-slate-800"
           >
-            <Text className="font-inter-semibold text-primary">Back</Text>
+            <ChevronLeft size={18} color="#64748B" />
+            <Text className="text-xs font-inter-bold text-slate-700 dark:text-slate-200">
+              Back
+            </Text>
           </TouchableOpacity>
           <Text
             className="flex-1 text-lg font-inter-semibold text-slate-900 dark:text-slate-50"
@@ -208,6 +213,23 @@ const CourseDetailScreen = ({
               <Text className="text-base leading-6 text-slate-600 dark:text-slate-300">
                 {course.description}
               </Text>
+            )}
+            {materials.length > 0 && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("StudyRoomSetup", {
+                    courseId: course.id,
+                    materialId: materials[0]?.id,
+                  })
+                }
+                activeOpacity={0.85}
+                className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-indigo-600 py-3 px-4"
+              >
+                <MessageSquare size={16} color="#FFFFFF" />
+                <Text className="text-xs font-inter-bold text-white">
+                  Study This Course with AI Buddy
+                </Text>
+              </TouchableOpacity>
             )}
           </View>
 

@@ -30,7 +30,18 @@ const ContinueStudying = ({ courses }: Props) => {
       >
         {courses.map((course) => (
           <View key={course.id} className="w-64">
-            <CourseCard id={course.id} title={course.title} subject={course.subject} progress={course.progress} totalTopics={course.totalTopics} completedTopics={course.completedTopics} lastAccessed={course.lastAccessed} onPress={() => { }} />
+            <CourseCard
+              id={course.id}
+              title={course.title}
+              subject={course.subject}
+              progress={course.progress}
+              totalTopics={course.totalTopics}
+              completedTopics={course.completedTopics}
+              lastAccessed={course.lastAccessed}
+              onPress={() =>
+                navigation.navigate('CourseDetail', { courseId: course.id })
+              }
+            />
           </View>
         ))}
       </ScrollView>

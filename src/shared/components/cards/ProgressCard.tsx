@@ -47,7 +47,7 @@ export function ProgressCard({
   return (
     <View
       className={clsx(
-        'items-center rounded-3xl bg-white p-5 dark:bg-slate-800',
+        'items-center rounded-3xl border border-slate-200/70 bg-white p-5 dark:border-slate-700/60 dark:bg-slate-800',
         className,
       )}
     >

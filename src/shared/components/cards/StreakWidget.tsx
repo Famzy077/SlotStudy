@@ -18,7 +18,7 @@ export function StreakWidget({ currentStreak, weeklyData, showWeekly = true, cla
     <Animated.View
       entering={FadeIn.duration(600)}
       className={clsx(
-        'rounded-3xl bg-white p-5 dark:bg-slate-800',
+        'rounded-3xl border border-slate-200/70 bg-white p-5 dark:border-slate-700/60 dark:bg-slate-800',
         className,
       )}
     >

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { ScreenWrapper } from "@/shared/components/layout/ScreenWrapper";
 import GreetingHeader from "../components/GreetingHeader";
 import QuickActions from "../components/QuickActions";
@@ -100,7 +101,7 @@ const HomeScreen = () => {
           <TouchableOpacity
             accessibilityRole="button"
             onPress={() => navigation.navigate("AcademicDetails")}
-            className="mx-6 mb-6 flex-row items-center rounded-3xl bg-blue-50 p-4 dark:bg-slate-800"
+            className="mx-6 mb-6 flex-row items-center rounded-3xl border border-blue-200/70 bg-blue-50/90 p-4 dark:border-slate-700/70 dark:bg-slate-800"
           >
             <View className="h-11 w-11 items-center justify-center rounded-2xl bg-white dark:bg-slate-700">
               <GraduationCap size={21} color="#2563EB" />
@@ -122,24 +123,32 @@ const HomeScreen = () => {
             accessibilityRole="button"
             accessibilityLabel="Start your first study session by uploading course material"
             onPress={() => navigation.navigate("UploadMaterial", {})}
-            className="mx-6 mb-6 rounded-3xl bg-primary p-5"
+            activeOpacity={0.85}
+            className="mx-6 mb-6 overflow-hidden rounded-3xl shadow-sm"
           >
-            <View className="mb-3 h-11 w-11 items-center justify-center rounded-2xl bg-white/20">
-              <BookOpen size={22} color="#FFFFFF" />
-            </View>
-            <Text className="text-lg font-bold text-white">
-              Start your first study session
-            </Text>
-            <Text className="mt-1 text-sm leading-5 text-white/80">
-              Upload a PDF or image of your notes. We’ll create a summary you
-              can study and practise from.
-            </Text>
-            <View className="mt-4 flex-row items-center">
-              <Text className="mr-1 font-semibold text-white">
-                Upload material
+            <LinearGradient
+              colors={["#2563EB", "#4F46E5"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ padding: 20 }}
+            >
+              <View className="mb-3 h-11 w-11 items-center justify-center rounded-2xl bg-white/20">
+                <BookOpen size={22} color="#FFFFFF" />
+              </View>
+              <Text className="text-lg font-bold text-white">
+                Start your first study session
               </Text>
-              <ChevronRight size={18} color="#FFFFFF" />
-            </View>
+              <Text className="mt-1 text-sm leading-5 text-white/85">
+                Upload a PDF or image of your notes. We’ll create a summary you
+                can study and practise from.
+              </Text>
+              <View className="mt-4 flex-row items-center">
+                <Text className="mr-1 font-semibold text-white">
+                  Upload material
+                </Text>
+                <ChevronRight size={18} color="#FFFFFF" />
+              </View>
+            </LinearGradient>
           </TouchableOpacity>
         ) : null}
 
@@ -171,7 +180,7 @@ const HomeScreen = () => {
             <TouchableOpacity
               accessibilityRole="button"
               onPress={() => navigation.navigate("QuizHub")}
-              className="mt-3 rounded-2xl bg-blue-50 p-4 dark:bg-slate-800"
+              className="mt-3 rounded-2xl border border-blue-200/70 bg-blue-50/90 p-4 dark:border-slate-700/70 dark:bg-slate-800"
             >
               <Text className="font-semibold text-slate-900 dark:text-slate-50">
                 {Object.entries(dashboard.examReadiness.subjects).length

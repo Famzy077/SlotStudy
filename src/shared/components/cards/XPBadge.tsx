@@ -19,8 +19,8 @@ export function XPBadge({ xp, level, size = 'md', className }: XPBadgeProps) {
     <Animated.View
       entering={FadeIn.duration(600)}
       className={clsx(
-        'flex-row items-center rounded-2xl bg-amber-50 dark:bg-amber-900/30',
-        isSmall ? 'px-3 py-2' : 'px-4 py-3',
+        'flex-row items-center rounded-3xl border border-amber-200/70 bg-amber-50 dark:border-amber-700/40 dark:bg-amber-900/30',
+        isSmall ? 'px-3 py-2' : 'p-5',
         className,
       )}
     >
