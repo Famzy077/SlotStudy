@@ -132,7 +132,7 @@ Create a `.env` file in the root of `SlotStudy-Client`:
 
 ```env
 # Backend API Base URL
-EXPO_PUBLIC_API_URL=https://slotstudy.onrender.com/api/v1
+EXPO_PUBLIC_API_URL=https://example.com/api/v1
 
 # Optional: Google OAuth Client IDs
 EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=your-android-client-id.apps.googleusercontent.com
