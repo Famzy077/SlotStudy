@@ -11,12 +11,14 @@ import { ScreenWrapper } from "@/shared/components/layout/ScreenWrapper";
 import GreetingHeader from "../components/GreetingHeader";
 import QuickActions from "../components/QuickActions";
 import ContinueStudying from "../components/ContinueStudying";
+import { HomeProgressSection } from "../components/HomeProgressSection";
 import { StreakWidget } from "@/shared/components/cards/StreakWidget";
 import { XPBadge } from "@/shared/components/cards/XPBadge";
 import { ProgressCard } from "@/shared/components/cards/ProgressCard";
 import { SkeletonCard as LoadingSkeleton } from "@/shared/components/ui/LoadingSkeleton";
 import { ErrorState } from "@/shared/components/feedback/ErrorState";
 import { useDashboard } from "../hooks/useDashboard";
+import { useProgress } from "@/features/progress/hooks/useProgress";
 import { useProfile } from "@/features/profile/hooks/useProfile";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { GraduationCap, ChevronRight, BookOpen } from "lucide-react-native";
@@ -25,8 +27,18 @@ import { useNavigation } from "@react-navigation/native";
 const HomeScreen = () => {
   const { data, isLoading, isError, refetch, isRefetching } = useDashboard();
   const { data: profileResponse } = useProfile();
+  const {
+    data: progressResponse,
+    refetch: refetchProgress,
+    isRefetching: isProgressRefetching,
+  } = useProgress();
   const username = useAuthStore((state) => state.user?.username ?? "");
   const navigation = useNavigation<any>();
+
+  const isRefreshing = isRefetching || isProgressRefetching;
+  const handleRefresh = () => {
+    void Promise.all([refetch(), refetchProgress()]);
+  };
 
   if (isLoading) {
     return (
@@ -85,7 +97,7 @@ const HomeScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
         <GreetingHeader
@@ -197,6 +209,8 @@ const HomeScreen = () => {
             </TouchableOpacity>
           ) : null}
         </View>
+
+        <HomeProgressSection progress={progressResponse?.data} />
 
         <QuickActions actions={dashboard.quickActions} />
 

@@ -14,12 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.slotstudy.app",
-      "config": {
-        "googleSignIn": {
-          "reservedClientId": "YOUR_IOS_CLIENT_ID"
-        }
-      }
+      "bundleIdentifier": "com.slotstudy.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -36,7 +31,11 @@
         {
           "photosPermission": "Allow SlotStudy to choose a profile picture from your photo library."
         }
-      ]
+      ],
+      "expo-splash-screen",
+      "expo-status-bar",
+      "expo-web-browser",
+      "expo-asset"
     ],
     "scheme": "slotstudy",
     "extra": {

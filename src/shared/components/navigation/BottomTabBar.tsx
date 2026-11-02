@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
-import { Home, BookOpen, Sparkles, BarChart3, User } from 'lucide-react-native';
+import { Home, BookOpen, Sparkles, BarChart3, User, Users } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -15,6 +15,7 @@ const TAB_ICONS = {
   Home: Home,
   Courses: BookOpen,
   AI: Sparkles,
+  StudyBuddy: Users,
   Progress: BarChart3,
   Profile: User,
 } as const;

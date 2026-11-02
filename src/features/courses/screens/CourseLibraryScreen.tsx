@@ -220,7 +220,7 @@ const CourseLibraryScreen = () => {
             marginBottom: 16,
           }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            <RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} />
           }
           ListEmptyComponent={
             <EmptyState

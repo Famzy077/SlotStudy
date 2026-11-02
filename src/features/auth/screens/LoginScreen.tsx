@@ -35,7 +35,7 @@ const LoginScreen = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const passwordInputRef = useRef<TextInput>(null);
+  const passwordInputRef = useRef<any>(null);
 
   // Load client IDs from .env with fallbacks to prevent crash if undefined
   const [request, response, promptAsync] = Google.useAuthRequest({

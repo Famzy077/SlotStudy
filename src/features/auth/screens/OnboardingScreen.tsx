@@ -41,7 +41,7 @@ const SLIDES = [
 
 const OnboardingScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<any>(null);
   const navigation = useNavigation<any>();
   const setOnboarded = useAuthStore((state) => state.setOnboarded);
 

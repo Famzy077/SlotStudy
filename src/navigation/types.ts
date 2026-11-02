@@ -8,7 +8,8 @@ export type TabParamList = {
   Home: undefined;
   Courses: undefined;
   AI: undefined;
-  Progress: undefined;
+  StudyBuddy: undefined;
+  Progress?: undefined;
   Profile: undefined;
 };
 
