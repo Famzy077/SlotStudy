@@ -14,7 +14,9 @@ export interface Profile {
     currentStreak: number;
     totalXp: number;
     level: number;
-    studyHours: number;
+    studyHours: number | string;
+    studyHoursDecimal?: number;
+    studyTimeSeconds?: number;
   };
   subscription: {
     plan: "free" | "pro";

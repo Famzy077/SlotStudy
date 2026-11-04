@@ -207,7 +207,9 @@ export default function ProfileScreen() {
             </Text>
             <Text className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {profile.stats.totalXp.toLocaleString()} XP earned ·{" "}
-              {profile.stats.studyHours} study hours
+              {typeof profile.stats.studyHours === "string"
+                ? `${profile.stats.studyHours} study time`
+                : `${profile.stats.studyHours} study hours`}
             </Text>
           </View>
         </View>
