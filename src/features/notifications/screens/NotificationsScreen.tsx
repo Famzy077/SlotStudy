@@ -71,7 +71,7 @@ export default function NotificationsScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         contentContainerStyle={{ paddingBottom: 20 }}
         ListEmptyComponent={<EmptyState title="No notifications" message="You are all caught up!" />}
-        renderItem={({ item }) => (
+        renderItem={({ item }: { item: any }) => (
           <TouchableOpacity
             onPress={() => !item.isRead && markAsRead(item.id)}
             className={`flex-row p-4 border-b border-slate-100 dark:border-slate-800 ${

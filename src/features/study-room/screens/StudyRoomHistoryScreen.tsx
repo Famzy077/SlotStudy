@@ -113,7 +113,7 @@ export default function StudyRoomHistoryScreen() {
             flexGrow: 1,
           }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({ item }: { item: any }) => (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() =>

@@ -371,7 +371,7 @@ export default function StudyRoomScreen() {
               flexGrow: 1,
             }}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item, index }) => (
+            renderItem={({ item, index }: { item: any; index: number }) => (
               <ChatMessageBubble
                 message={item}
                 isStreaming={

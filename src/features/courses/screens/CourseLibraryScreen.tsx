@@ -238,7 +238,7 @@ const CourseLibraryScreen = () => {
               onAction={() => setShowCourseForm(true)}
             />
           }
-          renderItem={({ item }) => {
+          renderItem={({ item }: { item: any }) => {
             const openCourseDetail = (courseId: string) =>
               navigation.navigate("CourseDetail", { courseId });
 

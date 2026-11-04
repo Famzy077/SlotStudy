@@ -21,6 +21,8 @@ const queryClient = new QueryClient({
   },
 });
 
+import { SocketProvider } from '@/shared/context/SocketContext';
+
 interface ProvidersProps {
   children: React.ReactNode;
 }
@@ -30,14 +32,17 @@ export function Providers({ children }: ProvidersProps) {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeSynchronizer />
-          <NavigationContainer>{children}</NavigationContainer>
-          <AppAlertHost />
+          <SocketProvider>
+            <ThemeSynchronizer />
+            <NavigationContainer>{children}</NavigationContainer>
+            <AppAlertHost />
+          </SocketProvider>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
+
 
 function ThemeSynchronizer() {
   const themeMode = useSettingsStore((state) => state.themeMode);
