@@ -40,7 +40,7 @@ export const DiscoverTab: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [selectedSchool, setSelectedSchool] = useState<string>('');
+  const [selectedSchool, setSelectedSchool] = useState<string>('All Schools');
   const [students, setStudents] = useState<StudyBuddyStudent[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -64,11 +64,9 @@ export const DiscoverTab: React.FC = () => {
         if (pageNum > 1) setLoadingMore(true);
 
         const schoolParam =
-          selectedSchool && selectedSchool !== 'All Schools'
-            ? selectedSchool
-            : selectedSchool === 'All Schools'
-              ? 'all'
-              : undefined;
+          !selectedSchool || selectedSchool === 'All Schools'
+            ? 'all'
+            : selectedSchool;
 
         const data = await studyBuddyService.discover({
           school: schoolParam,
