@@ -115,6 +115,9 @@ export const DiscoverTab: React.FC = () => {
       setSendingIds((prev) => new Set(prev).add(targetUserId));
       await studyBuddyService.sendFriendRequest(targetUserId);
       setPendingUserIds((prev) => new Set(prev).add(targetUserId));
+      setStudents((prev) =>
+        prev.map((s) => (s.id === targetUserId ? { ...s, friendshipStatus: 'PENDING_SENT' } : s)),
+      );
     } catch (err: any) {
       console.warn('Failed to send friend request:', err.message);
     } finally {
@@ -126,9 +129,34 @@ export const DiscoverTab: React.FC = () => {
     }
   };
 
+  const handleCancelFriendRequest = async (targetUserId: string) => {
+    try {
+      setSendingIds((prev) => new Set(prev).add(targetUserId));
+      await studyBuddyService.unfriend(targetUserId);
+      setPendingUserIds((prev) => {
+        const next = new Set(prev);
+        next.delete(targetUserId);
+        return next;
+      });
+      setStudents((prev) =>
+        prev.map((s) => (s.id === targetUserId ? { ...s, friendshipStatus: 'NONE', friendshipId: null } : s)),
+      );
+    } catch (err: any) {
+      console.warn('Failed to cancel friend request:', err.message);
+    } finally {
+      setSendingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(targetUserId);
+        return next;
+      });
+    }
+  };
+
   const renderStudentCard = ({ item }: { item: StudyBuddyStudent }) => {
     const isOnline = isUserOnline(item.id);
-    const isPending = pendingUserIds.has(item.id);
+    const isPendingSent =
+      item.friendshipStatus === 'PENDING_SENT' || pendingUserIds.has(item.id);
+    const isPendingReceived = item.friendshipStatus === 'PENDING_RECEIVED';
     const isSending = sendingIds.has(item.id);
 
     return (
@@ -167,32 +195,53 @@ export const DiscoverTab: React.FC = () => {
           </View>
 
           {/* Action Button */}
-          <TouchableOpacity
-            disabled={isPending || isSending}
-            onPress={() => handleSendFriendRequest(item.id)}
-            activeOpacity={0.8}
-            className={`flex-row items-center rounded-xl px-3 py-2 ${
-              isPending
-                ? 'bg-amber-50 dark:bg-amber-900/20'
-                : 'bg-indigo-600 active:bg-indigo-700'
-            }`}
-          >
-            {isSending ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : isPending ? (
-              <>
-                <Clock size={14} color="#D97706" />
-                <Text className="ml-1.5 text-xs font-inter-semibold text-amber-700 dark:text-amber-400">
+          {isPendingSent ? (
+            <View className="flex-row items-center gap-1.5">
+              <View className="flex-row items-center rounded-xl bg-amber-50 px-2.5 py-2 dark:bg-amber-900/20">
+                <Clock size={13} color="#D97706" />
+                <Text className="ml-1 text-xs font-inter-semibold text-amber-700 dark:text-amber-400">
                   Pending
                 </Text>
-              </>
-            ) : (
-              <>
-                <UserPlus size={14} color="#FFFFFF" />
-                <Text className="ml-1.5 text-xs font-inter-semibold text-white">Add</Text>
-              </>
-            )}
-          </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                disabled={isSending}
+                onPress={() => handleCancelFriendRequest(item.id)}
+                activeOpacity={0.8}
+                className="rounded-xl border border-slate-200 px-2.5 py-2 dark:border-slate-700"
+              >
+                {isSending ? (
+                  <ActivityIndicator size="small" color="#64748b" />
+                ) : (
+                  <Text className="text-xs font-inter-medium text-slate-500 dark:text-slate-400">
+                    Cancel
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : isPendingReceived ? (
+            <View className="flex-row items-center rounded-xl bg-emerald-50 px-3 py-2 dark:bg-emerald-900/20">
+              <Check size={14} color="#059669" />
+              <Text className="ml-1 text-xs font-inter-semibold text-emerald-700 dark:text-emerald-400">
+                Sent Request
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              disabled={isSending}
+              onPress={() => handleSendFriendRequest(item.id)}
+              activeOpacity={0.8}
+              className="flex-row items-center rounded-xl bg-indigo-600 px-3 py-2 active:bg-indigo-700"
+            >
+              {isSending ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <>
+                  <UserPlus size={14} color="#FFFFFF" />
+                  <Text className="ml-1.5 text-xs font-inter-semibold text-white">Add</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Bio */}

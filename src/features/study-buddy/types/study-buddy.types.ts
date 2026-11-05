@@ -9,6 +9,7 @@ export interface StudyBuddyStudent {
   bio: string | null;
   isOnline?: boolean;
   friendshipStatus?: FriendshipActionState;
+  friendshipId?: string | null;
 }
 
 export interface DiscoverResponse {
