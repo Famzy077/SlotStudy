@@ -5,6 +5,8 @@ export interface StudyBuddyStudent {
   name: string;
   avatarUrl: string | null;
   school: string | null;
+  program: string | null;
+  yearOfStudy: number | null;
   courses: string[];
   bio: string | null;
   isOnline?: boolean;

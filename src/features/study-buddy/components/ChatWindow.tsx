@@ -28,6 +28,7 @@ import { useTheme } from '@/shared/hooks/useTheme';
 import { useSocket } from '@/shared/hooks/useSocket';
 import { studyBuddyService } from '../services/study-buddy.service';
 import type { ChatMessage, StudyBuddyStudent } from '../types/study-buddy.types';
+import { StudentProfileModal } from './StudentProfileModal';
 
 interface ChatWindowProps {
   conversationId: string;
@@ -64,6 +65,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [submittingReport, setSubmittingReport] = useState(false);
+  const [profileVisible, setProfileVisible] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -345,29 +347,37 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             <ArrowLeft size={18} color="#475569" />
           </TouchableOpacity>
 
-          <View className="relative mr-2.5">
-            {otherUser.avatarUrl ? (
-              <Image source={{ uri: otherUser.avatarUrl }} className="h-10 w-10 rounded-full" />
-            ) : (
-              <View className="h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
-                <Text className="text-sm font-inter-bold text-indigo-700 dark:text-indigo-300">
-                  {otherUser.name.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-            )}
-            {isOnline && (
-              <View className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
-            )}
-          </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={`View ${otherUser.name}'s profile`}
+            onPress={() => setProfileVisible(true)}
+            activeOpacity={0.75}
+            className="flex-1 flex-row items-center"
+          >
+            <View className="relative mr-2.5">
+              {otherUser.avatarUrl ? (
+                <Image source={{ uri: otherUser.avatarUrl }} className="h-10 w-10 rounded-full" />
+              ) : (
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
+                  <Text className="text-sm font-inter-bold text-indigo-700 dark:text-indigo-300">
+                    {otherUser.name.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+              {isOnline && (
+                <View className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
+              )}
+            </View>
 
-          <View className="flex-1">
-            <Text numberOfLines={1} className="font-inter-bold text-slate-900 dark:text-slate-50 text-base">
-              {otherUser.name}
-            </Text>
-            <Text className="text-[11px] font-inter-medium text-slate-500">
-              {isTyping ? 'Typing...' : isOnline ? 'Online now' : otherUser.school || 'Coursemate'}
-            </Text>
-          </View>
+            <View className="flex-1">
+              <Text numberOfLines={1} className="font-inter-bold text-slate-900 dark:text-slate-50 text-base">
+                {otherUser.name}
+              </Text>
+              <Text className="text-[11px] font-inter-medium text-slate-500">
+                {isTyping ? 'Typing...' : isOnline ? 'Online now' : otherUser.school || 'Coursemate'}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Header Actions Menu Button */}
@@ -544,6 +554,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           </View>
         </KeyboardAvoidingView>
       </Modal>
+      <StudentProfileModal
+        student={profileVisible ? otherUser : null}
+        isOnline={isOnline}
+        onClose={() => setProfileVisible(false)}
+      />
     </KeyboardAvoidingView>
   );
 };

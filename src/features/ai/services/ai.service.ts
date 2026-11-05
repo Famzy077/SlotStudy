@@ -78,6 +78,12 @@ class AIService {
     return response as any;
   }
 
+  async deleteMaterial(
+    materialId: string,
+  ): Promise<ApiResponse<{ success: boolean; storageCleanupWarning?: string }>> {
+    return apiClient.delete(`${ENDPOINTS.MATERIALS}/${materialId}`);
+  }
+
   async generateQuiz(data: GenerateQuizFromSummary): Promise<ApiResponse<any>> {
     const response = await apiClient.post<ApiResponse<any>>(
       `${ENDPOINTS.QUIZ}/generate`,

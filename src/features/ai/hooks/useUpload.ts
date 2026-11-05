@@ -31,6 +31,23 @@ export const useProcessMaterial = () => {
   });
 };
 
+export const useDeleteMaterial = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (materialId: string) => aiService.deleteMaterial(materialId),
+    onSuccess: async (_response, materialId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["materials"] }),
+        queryClient.invalidateQueries({ queryKey: ["recentSummaries"] }),
+        queryClient.invalidateQueries({ queryKey: ["summary", materialId] }),
+        queryClient.invalidateQueries({ queryKey: ["courses"] }),
+        queryClient.invalidateQueries({ queryKey: ["course"] }),
+      ]);
+    },
+  });
+};
+
 export const useMaterials = (courseId?: string) => {
   return useQuery({
     queryKey: ["materials", courseId],

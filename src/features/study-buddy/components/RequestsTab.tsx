@@ -14,6 +14,7 @@ import { useTheme } from '@/shared/hooks/useTheme';
 import { useSocket } from '@/shared/hooks/useSocket';
 import { studyBuddyService } from '../services/study-buddy.service';
 import type { FriendRequestItem } from '../types/study-buddy.types';
+import { StudentProfileModal } from './StudentProfileModal';
 
 export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string) => void }> = ({
   onNavigateToChat,
@@ -28,6 +29,8 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
   const [refreshing, setRefreshing] = useState(false);
   const [actioningId, setActioningId] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<FriendRequestItem | null>(null);
+  const [declineTarget, setDeclineTarget] = useState<FriendRequestItem | null>(null);
+  const [profileTarget, setProfileTarget] = useState<FriendRequestItem['user'] | null>(null);
 
   const fetchRequests = useCallback(async (isRefresh = false) => {
     try {
@@ -71,13 +74,15 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
     }
   };
 
-  const handleDecline = async (requestId: string) => {
+  const handleDecline = async (requestId: string): Promise<boolean> => {
     try {
       setActioningId(requestId);
       await studyBuddyService.declineFriendRequest(requestId);
       setIncoming((prev) => prev.filter((r) => r.id !== requestId));
+      return true;
     } catch (err: any) {
       console.warn('Failed to decline request:', err.message);
+      return false;
     } finally {
       setActioningId(null);
     }
@@ -105,7 +110,13 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
         key={`in-${item.id}`}
         className="mb-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
       >
-        <View className="flex-row items-center">
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={`View ${item.user.name}'s profile`}
+          onPress={() => setProfileTarget(item.user)}
+          activeOpacity={0.75}
+          className="flex-row items-center"
+        >
           <View className="relative mr-3">
             {item.user.avatarUrl ? (
               <Image source={{ uri: item.user.avatarUrl }} className="h-12 w-12 rounded-full" />
@@ -134,7 +145,7 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
               </View>
             ) : null}
           </View>
-        </View>
+        </TouchableOpacity>
 
         {item.user.bio ? (
           <Text numberOfLines={2} className="mt-2 text-xs text-slate-600 dark:text-slate-300">
@@ -178,7 +189,7 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
 
           <TouchableOpacity
             disabled={isBusy}
-            onPress={() => handleDecline(item.id)}
+            onPress={() => setDeclineTarget(item)}
             activeOpacity={0.8}
             className="flex-row items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-800"
           >
@@ -202,7 +213,13 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
         className="mb-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
       >
         <View className="flex-row items-start justify-between">
-          <View className="flex-row items-center flex-1 mr-3">
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={`View ${item.user.name}'s profile`}
+            onPress={() => setProfileTarget(item.user)}
+            activeOpacity={0.75}
+            className="flex-row items-center flex-1 mr-3"
+          >
             <View className="relative mr-3">
               {item.user.avatarUrl ? (
                 <Image source={{ uri: item.user.avatarUrl }} className="h-12 w-12 rounded-full" />
@@ -237,7 +254,7 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
                 </Text>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             disabled={isBusy}
@@ -414,7 +431,69 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
         />
       )}
 
-      {/* Cancel Request Confirmation Modal */}
+      {/* Decline Incoming Request Confirmation Modal */}
+      <Modal
+        visible={Boolean(declineTarget)}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          if (!declineTarget || actioningId !== declineTarget.id) {
+            setDeclineTarget(null);
+          }
+        }}
+      >
+        <View className="flex-1 items-center justify-center bg-black/50 px-6">
+          <View className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-xl dark:bg-slate-900">
+            <View className="items-center">
+              <View className="h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-950/40">
+                <AlertTriangle size={28} color="#d97706" />
+              </View>
+              <Text className="mt-4 text-center font-inter-bold text-lg text-slate-900 dark:text-slate-50">
+                Decline friend request?
+              </Text>
+              <Text className="mt-2 text-center text-xs leading-5 text-slate-500 dark:text-slate-400">
+                Decline the request from{' '}
+                <Text className="font-inter-bold text-slate-800 dark:text-slate-200">
+                  {declineTarget?.user.name}
+                </Text>
+                ? They can send you another request later.
+              </Text>
+            </View>
+            <View className="mt-6 flex-row gap-3">
+              <TouchableOpacity
+                disabled={Boolean(declineTarget && actioningId === declineTarget.id)}
+                onPress={() => setDeclineTarget(null)}
+                activeOpacity={0.8}
+                className="flex-1 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 py-3 dark:border-slate-700 dark:bg-slate-800"
+              >
+                <Text className="text-xs font-inter-bold text-slate-700 dark:text-slate-200">
+                  Keep Request
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={Boolean(declineTarget && actioningId === declineTarget.id)}
+                onPress={async () => {
+                  if (!declineTarget) return;
+                  if (await handleDecline(declineTarget.id)) {
+                    setDeclineTarget(null);
+                  }
+                }}
+                activeOpacity={0.8}
+                className="flex-1 flex-row items-center justify-center rounded-xl bg-rose-600 py-3"
+              >
+                {declineTarget && actioningId === declineTarget.id ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text className="text-xs font-inter-bold text-white">
+                    Decline request
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <Modal
         visible={Boolean(cancelTarget)}
         transparent
@@ -433,15 +512,15 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
               </View>
 
               <Text className="mt-4 text-center font-inter-bold text-lg text-slate-900 dark:text-slate-50">
-                Cancel Friend Request?
+                Withdraw friend request?
               </Text>
 
               <Text className="mt-2 text-center text-xs leading-5 text-slate-500 dark:text-slate-400">
-                Are you sure you want to cancel the friend request sent to{' '}
+                This will withdraw your pending request to{' '}
                 <Text className="font-inter-bold text-slate-800 dark:text-slate-200">
                   {cancelTarget?.user.name}
                 </Text>
-                ? You can always send a new request later.
+                . You can send a new request later.
               </Text>
             </View>
 
@@ -469,7 +548,7 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
                   <Text className="text-xs font-inter-bold text-white">
-                    Yes, Cancel
+                    Withdraw request
                   </Text>
                 )}
               </TouchableOpacity>
@@ -477,6 +556,11 @@ export const RequestsTab: React.FC<{ onNavigateToChat?: (conversationId: string)
           </View>
         </View>
       </Modal>
+      <StudentProfileModal
+        student={profileTarget}
+        isOnline={profileTarget ? isUserOnline(profileTarget.id) : false}
+        onClose={() => setProfileTarget(null)}
+      />
     </View>
   );
 };

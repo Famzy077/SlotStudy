@@ -13,6 +13,7 @@ import {
   ChevronRight,
   RefreshCw,
   BookOpen,
+  Trash2,
 } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenWrapper } from "@/shared/components/layout/ScreenWrapper";
@@ -23,6 +24,7 @@ import { useTheme } from "@/shared/hooks/useTheme";
 import { useRecentSummaries } from "@/features/ai/hooks/useSummary";
 import {
   useMaterials,
+  useDeleteMaterial,
   useProcessMaterial,
 } from "@/features/ai/hooks/useUpload";
 import { SkeletonCard } from "@/shared/components/ui/LoadingSkeleton";
@@ -45,6 +47,7 @@ export default function AIHubScreen() {
     refetch: refetchMaterials,
   } = useMaterials();
   const processMaterial = useProcessMaterial();
+  const deleteMaterial = useDeleteMaterial();
 
   const summaries = summariesResponse?.data ?? [];
   const materials = materialsResponse?.data ?? [];
@@ -61,6 +64,39 @@ export default function AIHubScreen() {
         );
       },
     });
+  };
+
+  const confirmDeleteSummary = (materialId: string, title: string) => {
+    Alert.alert(
+      "Delete summary?",
+      `Delete "${title}" and its uploaded material? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteMaterial.mutate(materialId, {
+              onSuccess: (response) => {
+                Alert.alert(
+                  response.data.storageCleanupWarning
+                    ? "Summary deleted with a warning"
+                    : "Summary deleted",
+                  response.data.storageCleanupWarning ||
+                    `"${title}" and its uploaded material were deleted.`,
+                );
+              },
+              onError: (error) => {
+                Alert.alert(
+                  "Delete failed",
+                  error instanceof Error ? error.message : "Please try again.",
+                );
+              },
+            });
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -276,31 +312,62 @@ export default function AIHubScreen() {
           onRetry={() => void refetchSummaries()}
         />
       ) : summaries.length > 0 ? (
-        summaries.map((summary) => (
-          <TouchableOpacity
-            key={summary.id}
-            onPress={() =>
-              navigation.navigate("AISummary", {
-                materialId: summary.materialId,
-              })
-            }
-            className="mb-3.5 flex-row items-center rounded-2xl border border-slate-200/70 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800"
-          >
-            <View className="mr-4 h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30">
-              <FileText size={24} color="#4F46E5" />
+        summaries.map((summary) => {
+          const deleting =
+            deleteMaterial.isPending &&
+            deleteMaterial.variables === summary.materialId;
+
+          return (
+            <View
+              key={summary.id}
+              className="mb-3.5 flex-row items-center rounded-2xl border border-slate-200/70 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800"
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("AISummary", {
+                    materialId: summary.materialId,
+                  })
+                }
+                accessibilityRole="button"
+                accessibilityLabel={`Open summary ${summary.title}`}
+                className="mr-2 flex-1 flex-row items-center"
+              >
+                <View className="mr-4 h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30">
+                  <FileText size={24} color="#4F46E5" />
+                </View>
+                <View className="mr-2 flex-1">
+                  <Text
+                    numberOfLines={1}
+                    className="text-base font-inter-semibold text-slate-900 dark:text-slate-50"
+                  >
+                    {summary.title}
+                  </Text>
+                  <Text className="mt-0.5 text-sm font-inter-regular text-slate-500">
+                    {summary.difficulty.toLowerCase()} •{" "}
+                    {summary.estimatedReadTime} min read
+                  </Text>
+                </View>
+                <ChevronRight size={20} color={colors.textTertiary} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  confirmDeleteSummary(summary.materialId, summary.title)
+                }
+                disabled={deleting}
+                accessibilityRole="button"
+                accessibilityLabel={`Delete ${summary.title} and its uploaded material`}
+                accessibilityState={{ disabled: deleting }}
+                className="h-11 w-11 items-center justify-center rounded-xl bg-red-50 dark:bg-red-900/20"
+              >
+                {deleting ? (
+                  <ActivityIndicator size="small" color="#DC2626" />
+                ) : (
+                  <Trash2 size={18} color="#DC2626" />
+                )}
+              </TouchableOpacity>
             </View>
-            <View className="flex-1">
-              <Text className="text-base font-inter-semibold text-slate-900 dark:text-slate-50">
-                {summary.title}
-              </Text>
-              <Text className="mt-0.5 text-sm font-inter-regular text-slate-500">
-                {summary.difficulty.toLowerCase()} • {summary.estimatedReadTime}{" "}
-                min read
-              </Text>
-            </View>
-            <ChevronRight size={20} color={colors.textTertiary} />
-          </TouchableOpacity>
-        ))
+          );
+        })
       ) : (
         <EmptyState
           title="No summaries yet"
