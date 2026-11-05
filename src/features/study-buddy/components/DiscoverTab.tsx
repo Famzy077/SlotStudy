@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import {
   Search,
@@ -18,6 +19,7 @@ import {
   Clock,
   X,
   Users,
+  AlertTriangle,
 } from 'lucide-react-native';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { useSocket } from '@/shared/hooks/useSocket';
@@ -52,6 +54,7 @@ export const DiscoverTab: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [pendingUserIds, setPendingUserIds] = useState<Set<string>>(new Set());
   const [sendingIds, setSendingIds] = useState<Set<string>>(new Set());
+  const [cancelTarget, setCancelTarget] = useState<StudyBuddyStudent | null>(null);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -212,6 +215,7 @@ export const DiscoverTab: React.FC = () => {
       setStudents((prev) =>
         prev.map((s) => (s.id === targetUserId ? { ...s, friendshipStatus: 'NONE', friendshipId: null } : s)),
       );
+      setCancelTarget(null);
     } catch (err: any) {
       console.warn('Failed to cancel friend request:', err.message);
     } finally {
@@ -300,7 +304,7 @@ export const DiscoverTab: React.FC = () => {
               </View>
               <TouchableOpacity
                 disabled={isSending}
-                onPress={() => handleCancelFriendRequest(item.id)}
+                onPress={() => setCancelTarget(item)}
                 activeOpacity={0.8}
                 className="flex-row items-center rounded-xl border border-rose-200 bg-rose-50/70 px-2.5 py-1.5 dark:border-rose-800/60 dark:bg-rose-950/30"
               >
@@ -384,7 +388,7 @@ export const DiscoverTab: React.FC = () => {
             </View>
             <TouchableOpacity
               disabled={isSending}
-              onPress={() => handleCancelFriendRequest(item.id)}
+              onPress={() => setCancelTarget(item)}
               activeOpacity={0.7}
             >
               <Text className="text-[11px] font-inter-bold text-rose-600 dark:text-rose-400">
@@ -541,6 +545,68 @@ export const DiscoverTab: React.FC = () => {
           }
         />
       )}
+
+      {/* Cancel Request Confirmation Modal */}
+      <Modal
+        visible={Boolean(cancelTarget)}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          if (!cancelTarget || !sendingIds.has(cancelTarget.id)) {
+            setCancelTarget(null);
+          }
+        }}
+      >
+        <View className="flex-1 items-center justify-center bg-black/50 px-6">
+          <View className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-xl dark:bg-slate-900">
+            <View className="items-center">
+              <View className="h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-950/40">
+                <AlertTriangle size={28} color="#e11d48" />
+              </View>
+
+              <Text className="mt-4 text-center font-inter-bold text-lg text-slate-900 dark:text-slate-50">
+                Cancel Friend Request?
+              </Text>
+
+              <Text className="mt-2 text-center text-xs leading-5 text-slate-500 dark:text-slate-400">
+                Are you sure you want to cancel the friend request sent to{' '}
+                <Text className="font-inter-bold text-slate-800 dark:text-slate-200">
+                  {cancelTarget?.name}
+                </Text>
+                ? You can always send a new request later.
+              </Text>
+            </View>
+
+            <View className="mt-6 flex-row gap-3">
+              <TouchableOpacity
+                disabled={Boolean(cancelTarget && sendingIds.has(cancelTarget.id))}
+                onPress={() => setCancelTarget(null)}
+                activeOpacity={0.8}
+                className="flex-1 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 py-3 dark:border-slate-700 dark:bg-slate-800"
+              >
+                <Text className="text-xs font-inter-bold text-slate-700 dark:text-slate-200">
+                  Keep Request
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                disabled={Boolean(cancelTarget && sendingIds.has(cancelTarget.id))}
+                onPress={() => cancelTarget && handleCancelFriendRequest(cancelTarget.id)}
+                activeOpacity={0.8}
+                className="flex-1 flex-row items-center justify-center rounded-xl bg-rose-600 py-3 active:bg-rose-700"
+              >
+                {cancelTarget && sendingIds.has(cancelTarget.id) ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text className="text-xs font-inter-bold text-white">
+                    Yes, Cancel
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
