@@ -51,7 +51,7 @@ export default function StudyBuddyScreen() {
               Study Buddy
             </Text>
             <Text className="text-xs font-inter-medium text-slate-500 mt-0.5">
-              Connect & Revise with Coursemates 🇳🇬
+              Connect & Revise with Coursemates
             </Text>
           </View>
 

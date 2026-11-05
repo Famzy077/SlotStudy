@@ -29,6 +29,8 @@ const POPULAR_SCHOOLS = [
   'National Open University (NOUN)',
   'Miva Open University',
   'University of Lagos (UNILAG)',
+  'University of Ibadan (UI)',
+  'University of Nigeria, Nsukka (UNN)',
   'Ahmadu Bello University (ABU)',
 ];
 
@@ -37,6 +39,7 @@ export const DiscoverTab: React.FC = () => {
   const { isUserOnline } = useSocket();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedSchool, setSelectedSchool] = useState<string>('');
   const [students, setStudents] = useState<StudyBuddyStudent[]>([]);
   const [page, setPage] = useState(1);
@@ -46,6 +49,13 @@ export const DiscoverTab: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [pendingUserIds, setPendingUserIds] = useState<Set<string>>(new Set());
   const [sendingIds, setSendingIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 250);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   const fetchStudents = useCallback(
     async (pageNum = 1, isRefresh = false) => {
@@ -62,7 +72,7 @@ export const DiscoverTab: React.FC = () => {
 
         const data = await studyBuddyService.discover({
           school: schoolParam,
-          q: searchQuery.trim() || undefined,
+          q: debouncedSearch.trim() || undefined,
           page: pageNum,
           limit: 15,
         });
@@ -82,7 +92,7 @@ export const DiscoverTab: React.FC = () => {
         setRefreshing(false);
       }
     },
-    [selectedSchool, searchQuery],
+    [selectedSchool, debouncedSearch],
   );
 
   useEffect(() => {
