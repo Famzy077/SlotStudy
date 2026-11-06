@@ -188,7 +188,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             success: false,
             error: 'Message send timed out. Check your connection and retry.',
           });
-        }, 12_000);
+        }, 30_000);
 
         socket.emit(
           'message:send',
