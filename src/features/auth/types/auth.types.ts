@@ -1,5 +1,6 @@
 export interface GoogleAuthRequest {
   idToken: string;
+  termsAccepted?: boolean;
 }
 
 export interface AuthResponse {

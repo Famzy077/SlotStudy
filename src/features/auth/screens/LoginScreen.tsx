@@ -20,7 +20,7 @@ import {
 } from "@/shared/services/api.client";
 import { Button } from "@/shared/components/ui/Button";
 import { AppAlert as Alert } from "@/shared/components/feedback/AppAlert";
-import { Eye, EyeOff } from "lucide-react-native";
+import { Check, Eye, EyeOff } from "lucide-react-native";
 import type { AuthResponse } from "../types/auth.types";
 
 // Required for web browser to close correctly after auth
@@ -35,6 +35,8 @@ const LoginScreen = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const termsAcceptedRef = useRef(false);
   const passwordInputRef = useRef<any>(null);
 
   // Load client IDs from .env with fallbacks to prevent crash if undefined
@@ -50,7 +52,10 @@ const LoginScreen = () => {
   useEffect(() => {
     if (response?.type === "success" && response.authentication?.idToken) {
       loginWithGoogle(
-        { idToken: response.authentication.idToken },
+        {
+          idToken: response.authentication.idToken,
+          termsAccepted: termsAcceptedRef.current,
+        },
         {
           onSuccess: () =>
             Alert.alert(
@@ -206,6 +211,38 @@ const LoginScreen = () => {
             <View className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-700" />
             <Text className="px-4 text-slate-400 font-medium">OR</Text>
             <View className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-700" />
+          </View>
+
+          <View className="mb-6 flex-row items-start">
+            <TouchableOpacity
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: termsAccepted }}
+              accessibilityLabel="I agree to the Terms and Conditions for new Google accounts"
+              onPress={() =>
+                setTermsAccepted((accepted) => {
+                  termsAcceptedRef.current = !accepted;
+                  return !accepted;
+                })
+              }
+              className={`mr-2 mt-0.5 h-5 w-5 items-center justify-center rounded border ${
+                termsAccepted
+                  ? "border-indigo-600 bg-indigo-600"
+                  : "border-slate-400 dark:border-slate-500"
+              }`}
+            >
+              {termsAccepted ? <Check size={14} color="#ffffff" /> : null}
+            </TouchableOpacity>
+            <Text className="flex-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
+              If this is your first Google sign-in, agree to the{" "}
+              <Text
+                accessibilityRole="link"
+                onPress={() => navigation.navigate("Terms")}
+                className="font-semibold text-primary"
+              >
+                Terms and Conditions
+              </Text>
+              .
+            </Text>
           </View>
 
           <TouchableOpacity

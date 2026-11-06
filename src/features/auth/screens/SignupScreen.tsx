@@ -15,7 +15,7 @@ import {
   apiClient,
   getApiErrorMessage,
 } from "@/shared/services/api.client";
-import { Eye, EyeOff } from "lucide-react-native";
+import { Check, Eye, EyeOff } from "lucide-react-native";
 import type { AuthResponse } from "../types/auth.types";
 
 const SignupScreen = () => {
@@ -30,10 +30,18 @@ const SignupScreen = () => {
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleSignup = async () => {
     if (!form.name || !form.username || !form.email || !form.password) {
       Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    if (!termsAccepted) {
+      Alert.alert(
+        "Terms required",
+        "Please read and accept the Terms and Conditions to create an account.",
+      );
       return;
     }
 
@@ -47,6 +55,7 @@ const SignupScreen = () => {
           ...form,
           email: form.email.trim().toLowerCase(),
           username: form.username.trim().toLowerCase(),
+          termsAccepted: true,
         },
       );
       if ("otpRequired" in response.data && response.data.otpRequired) {
@@ -154,6 +163,9 @@ const SignupScreen = () => {
                 onChangeText={(text) => setForm({ ...form, password: text })}
               />
               <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                accessibilityState={{ selected: showPassword }}
                 className="absolute right-4"
                 onPress={() => setShowPassword(!showPassword)}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -166,6 +178,33 @@ const SignupScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+
+        <View className="mb-6 flex-row items-start">
+          <TouchableOpacity
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: termsAccepted }}
+            accessibilityLabel="I agree to the Terms and Conditions"
+            onPress={() => setTermsAccepted((accepted) => !accepted)}
+            className={`mr-2 mt-0.5 h-5 w-5 items-center justify-center rounded border ${
+              termsAccepted
+                ? "border-indigo-600 bg-indigo-600"
+                : "border-slate-400 dark:border-slate-500"
+            }`}
+          >
+            {termsAccepted ? <Check size={14} color="#ffffff" /> : null}
+          </TouchableOpacity>
+          <Text className="flex-1 text-xs leading-5 text-slate-600 dark:text-slate-300">
+            I have read and agree to the{" "}
+            <Text
+              accessibilityRole="link"
+              onPress={() => navigation.navigate("Terms")}
+              className="font-semibold text-primary"
+            >
+              Terms and Conditions
+            </Text>
+            .
+          </Text>
         </View>
 
         <Button
