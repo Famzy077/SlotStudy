@@ -22,6 +22,7 @@ import {
 import { useTheme } from "@/shared/hooks/useTheme";
 import { studyBuddyService } from "../services/study-buddy.service";
 import type { StudyBuddyStudent } from "../types/study-buddy.types";
+import { StudentProfileModal } from "./StudentProfileModal";
 
 const POPULAR_SCHOOLS = [
   "All Schools",
@@ -47,6 +48,7 @@ export const DiscoverTab: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [sendingIds, setSendingIds] = useState<Set<string>>(new Set());
+  const [profileTarget, setProfileTarget] = useState<StudyBuddyStudent | null>(null);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -140,39 +142,50 @@ export const DiscoverTab: React.FC = () => {
     return (
       <View className="mb-3 rounded-2xl border border-slate-200/80 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
         <View className="flex-row items-center">
-          <View className="mr-3">
-            {item.avatarUrl ? (
-              <Image
-                source={{ uri: item.avatarUrl }}
-                className="h-11 w-11 rounded-full"
-              />
-            ) : (
-              <View className="h-11 w-11 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
-                <Text className="text-base font-inter-bold text-indigo-700 dark:text-indigo-300">
-                  {item.name.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-            )}
-          </View>
-          <View className="mr-3 flex-1">
-            <Text
-              numberOfLines={1}
-              className="font-inter-bold text-slate-900 dark:text-slate-50 text-base"
-            >
-              {item.name}
-            </Text>
-            {item.school ? (
-              <View className="mt-0.5 flex-row items-center">
-                <School size={12} color="#64748b" />
-                <Text
-                  numberOfLines={1}
-                  className="ml-1 text-xs text-slate-500 dark:text-slate-400"
-                >
-                  {item.school}
-                </Text>
-              </View>
-            ) : null}
-          </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={`View ${item.name}'s profile`}
+            onPress={() => setProfileTarget(item)}
+            activeOpacity={0.75}
+            className="mr-3 flex-1 flex-row items-center"
+          >
+            <View className="mr-3">
+              {item.avatarUrl ? (
+                <Image
+                  source={{ uri: item.avatarUrl }}
+                  className="h-11 w-11 rounded-full"
+                />
+              ) : (
+                <View className="h-11 w-11 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
+                  <Text className="text-base font-inter-bold text-indigo-700 dark:text-indigo-300">
+                    {item.name.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View className="mr-3 flex-1">
+              <Text
+                numberOfLines={1}
+                className="font-inter-bold text-slate-900 dark:text-slate-50 text-base"
+              >
+                {item.name}
+              </Text>
+              {item.school ? (
+                <View className="mt-0.5 flex-row items-center">
+                  <School size={12} color="#64748b" />
+                  <Text
+                    numberOfLines={1}
+                    className="ml-1 text-xs text-slate-500 dark:text-slate-400"
+                  >
+                    {item.school}
+                  </Text>
+                </View>
+              ) : null}
+              <Text className="mt-1 text-[11px] font-inter-semibold text-indigo-600 dark:text-indigo-400">
+                View profile
+              </Text>
+            </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             disabled={isSending}
@@ -331,6 +344,11 @@ export const DiscoverTab: React.FC = () => {
           </View>
         </View>
       </Modal>
+      <StudentProfileModal
+        student={profileTarget}
+        isOnline={profileTarget?.isOnline ?? false}
+        onClose={() => setProfileTarget(null)}
+      />
     </View>
   );
 };

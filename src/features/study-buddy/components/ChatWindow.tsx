@@ -22,6 +22,7 @@ import {
   UserX,
   ShieldAlert,
   RotateCcw,
+  Smile,
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/shared/hooks/useTheme';
@@ -29,6 +30,8 @@ import { useSocket } from '@/shared/hooks/useSocket';
 import { studyBuddyService } from '../services/study-buddy.service';
 import type { ChatMessage, StudyBuddyStudent } from '../types/study-buddy.types';
 import { StudentProfileModal } from './StudentProfileModal';
+
+const CHAT_EMOJIS = ['😀', '😂', '😊', '😍', '👍', '🙏', '🎉', '❤️'];
 
 interface ChatWindowProps {
   conversationId: string;
@@ -57,6 +60,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const [inputSelection, setInputSelection] = useState({ start: 0, end: 0 });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -105,8 +110,25 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     const unsubscribe = addMessageListener((msg) => {
       if (msg.conversationId === conversationId) {
         setMessages((prev) => {
-          // If we already have an optimistic message with same text from us, deduplicate
           if (prev.some((m) => m.id === msg.id)) return prev;
+          const optimisticIndex = prev.findIndex(
+            (m) => m.isOutgoing && m.status === 'sending' && m.text === msg.text,
+          );
+          if (optimisticIndex !== -1) {
+            return prev.map((m, index) =>
+              index === optimisticIndex
+                ? {
+                    ...m,
+                    id: msg.id,
+                    senderId: msg.senderId,
+                    readAt: msg.readAt,
+                    createdAt: msg.createdAt,
+                    status: 'sent',
+                    error: undefined,
+                  }
+                : m,
+            );
+          }
           return [
             {
               id: msg.id,
@@ -138,12 +160,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     }, 2000);
   };
 
+  const insertChatEmoji = (emoji: string) => {
+    const start = Math.min(inputSelection.start, inputText.length);
+    const end = Math.min(inputSelection.end, inputText.length);
+    const nextText = `${inputText.slice(0, start)}${emoji}${inputText.slice(end)}`;
+    const nextCursor = start + emoji.length;
+    setInputText(nextText);
+    setInputSelection({ start: nextCursor, end: nextCursor });
+    setEmojiPickerVisible(false);
+  };
+
   const handleSend = async (retryMessage?: ChatMessage) => {
     const textToSend = retryMessage ? retryMessage.text : inputText.trim();
     if (!textToSend) return;
 
     if (!retryMessage) {
       setInputText('');
+      setInputSelection({ start: 0, end: 0 });
     }
     stopTyping(otherUser.id);
 
@@ -163,7 +196,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       setMessages((prev) => [optimisticMessage, ...prev]);
     } else {
       setMessages((prev) =>
-        prev.map((m) => (m.id === tempId ? { ...m, status: 'sending' } : m)),
+        prev.map((m) =>
+          m.id === tempId
+            ? { ...m, status: 'sending', error: undefined }
+            : m,
+        ),
       );
     }
 
@@ -184,12 +221,20 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         );
       } else {
         setMessages((prev) =>
-          prev.map((m) => (m.id === tempId ? { ...m, status: 'failed' } : m)),
+          prev.map((m) =>
+            m.id === tempId
+              ? { ...m, status: 'failed', error: res.error || 'Failed to send message.' }
+              : m,
+          ),
         );
       }
     } catch {
       setMessages((prev) =>
-        prev.map((m) => (m.id === tempId ? { ...m, status: 'failed' } : m)),
+        prev.map((m) =>
+          m.id === tempId
+            ? { ...m, status: 'failed', error: 'Message could not be sent. Please retry.' }
+            : m,
+        ),
       );
     }
   };
@@ -321,6 +366,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               </View>
             )}
           </View>
+          {isFailed && item.error ? (
+            <Text className="mt-1 text-[10px] leading-4 text-rose-100">
+              {item.error}
+            </Text>
+          ) : null}
         </View>
       </View>
     );
@@ -424,27 +474,60 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       {/* Input Bar */}
       <View
         style={{ paddingBottom: Math.max(insets.bottom, 12) }}
-        className="flex-row items-center border-t border-slate-200/80 bg-white px-4 pt-2.5 dark:border-slate-800 dark:bg-slate-900"
+        className="border-t border-slate-200/80 bg-white px-4 pt-2.5 dark:border-slate-800 dark:bg-slate-900"
       >
-        <TextInput
-          placeholder="Type a message..."
-          placeholderTextColor="#94a3b8"
-          value={inputText}
-          onChangeText={handleInputChange}
-          multiline
-          maxLength={2000}
-          className="max-h-24 flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-inter-regular text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-50"
-        />
+        {emojiPickerVisible ? (
+          <View className="mb-2 flex-row flex-wrap gap-1">
+            {CHAT_EMOJIS.map((emoji) => (
+              <TouchableOpacity
+                key={emoji}
+                accessibilityRole="button"
+                accessibilityLabel={`Insert ${emoji}`}
+                onPress={() => insertChatEmoji(emoji)}
+                className="rounded-lg px-2 py-1"
+              >
+                <Text className="text-xl">{emoji}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : null}
+        <View className="flex-row items-center">
+          <TextInput
+            placeholder="Type a message..."
+            placeholderTextColor="#94a3b8"
+            value={inputText}
+            onChangeText={handleInputChange}
+            selection={inputSelection}
+            onSelectionChange={(event) =>
+              setInputSelection(event.nativeEvent.selection)
+            }
+            multiline
+            maxLength={2000}
+            className="max-h-24 flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-inter-regular text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-50"
+          />
 
-        <TouchableOpacity
-          disabled={!inputText.trim()}
-          onPress={() => handleSend()}
-          className={`ml-2.5 h-11 w-11 items-center justify-center rounded-full ${
-            inputText.trim() ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-800'
-          }`}
-        >
-          <Send size={18} color={inputText.trim() ? '#FFFFFF' : '#94a3b8'} />
-        </TouchableOpacity>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Choose an emoji"
+            accessibilityState={{ expanded: emojiPickerVisible }}
+            onPress={() => setEmojiPickerVisible((visible) => !visible)}
+            className="ml-1.5 h-11 w-10 items-center justify-center rounded-full"
+          >
+            <Smile size={20} color="#64748b" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            disabled={!inputText.trim()}
+            onPress={() => handleSend()}
+            className={`ml-2.5 h-11 w-11 items-center justify-center rounded-full ${
+              inputText.trim()
+                ? 'bg-indigo-600'
+                : 'bg-slate-200 dark:bg-slate-800'
+            }`}
+          >
+            <Send size={18} color={inputText.trim() ? '#FFFFFF' : '#94a3b8'} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Menu Modal (Block, Report, Unfriend) */}

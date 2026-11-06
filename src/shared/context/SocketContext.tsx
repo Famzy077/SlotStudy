@@ -183,10 +183,18 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           return;
         }
 
+        const timeout = setTimeout(() => {
+          resolve({
+            success: false,
+            error: 'Message send timed out. Check your connection and retry.',
+          });
+        }, 12_000);
+
         socket.emit(
           'message:send',
           { toUserId, text },
           (response: { success: boolean; data?: SocketMessage; error?: string }) => {
+            clearTimeout(timeout);
             if (response && response.success) {
               resolve({ success: true, data: response.data });
             } else {
