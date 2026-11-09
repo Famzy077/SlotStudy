@@ -17,7 +17,6 @@ import {
   GraduationCap,
   LogOut,
   Settings,
-  Sparkles,
   Trophy,
   Pencil,
 } from "lucide-react-native";
@@ -199,7 +198,7 @@ export default function ProfileScreen() {
 
         <View className="mt-5 flex-row items-center rounded-3xl bg-white p-4 dark:bg-slate-800">
           <View className="h-11 w-11 items-center justify-center rounded-2xl bg-amber-100">
-            <Sparkles size={22} color="#D97706" />
+            <Trophy size={22} color="#D97706" />
           </View>
           <View className="ml-3 flex-1">
             <Text className="font-semibold text-slate-900 dark:text-slate-50">

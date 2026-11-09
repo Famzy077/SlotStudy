@@ -13,7 +13,7 @@ import {
   MessageSquare,
   Trash2,
   Calendar,
-  Sparkles,
+  GraduationCap,
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenWrapper } from '@/shared/components/layout/ScreenWrapper';
@@ -174,7 +174,7 @@ export default function StudyRoomHistoryScreen() {
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center px-4 py-16">
               <View className="mb-4 h-16 w-16 items-center justify-center rounded-3xl bg-blue-50 dark:bg-blue-900/40">
-                <Sparkles size={32} color={colors.primary} />
+                <GraduationCap size={32} color={colors.primary} />
               </View>
               <Text className="mb-1 text-center text-lg font-inter-bold text-slate-900 dark:text-slate-50">
                 No Study Rooms Yet

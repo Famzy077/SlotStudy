@@ -13,7 +13,7 @@ import {
   ChevronLeft,
   FileText,
   History,
-  Sparkles,
+  ShieldCheck,
   Layers,
 } from 'lucide-react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
@@ -122,7 +122,7 @@ export default function StudyRoomSetupScreen() {
         {/* Banner */}
         <View className="mb-6 rounded-3xl bg-blue-50/80 p-5 dark:bg-blue-900/20">
           <View className="flex-row items-center gap-2.5">
-            <Sparkles size={20} color={colors.primary} />
+            <ShieldCheck size={20} color={colors.primary} />
             <Text className="text-base font-inter-bold text-primary">
               Strictly Grounded Learning
             </Text>

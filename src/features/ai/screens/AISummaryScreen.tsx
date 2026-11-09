@@ -8,7 +8,7 @@ import {
   Copy,
   ChevronLeft,
   MessageSquare,
-  Sparkles,
+  BookOpenCheck,
 } from 'lucide-react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { ScreenWrapper } from '@/shared/components/layout/ScreenWrapper';
@@ -166,7 +166,7 @@ export default function AISummaryScreen() {
           />
           <Button
             title="Take a Quiz"
-            icon={<Sparkles size={16} color="#FFFFFF" />}
+            icon={<BookOpenCheck size={16} color="#FFFFFF" />}
             onPress={handleGenerateQuiz}
             loading={generateQuizMutation.isPending}
             className="flex-1 bg-primary"

@@ -4,10 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import { AppAlert } from "@/shared/components/feedback/AppAlert";
 import {
   Upload,
-  BrainCircuit,
+  Target,
   FileText,
   Layers,
-  Sparkles,
+  BookOpenCheck,
   Copy,
 } from "lucide-react-native";
 
@@ -18,7 +18,7 @@ const configMap: any = {
     bg: "bg-blue-50 dark:bg-blue-900/30",
   },
   quiz: {
-    icon: BrainCircuit,
+    icon: Target,
     color: "#F59E0B",
     bg: "bg-amber-50 dark:bg-amber-900/30",
   },
@@ -28,7 +28,7 @@ const configMap: any = {
     bg: "bg-indigo-50 dark:bg-indigo-900/30",
   },
   sparkles: {
-    icon: Sparkles,
+    icon: BookOpenCheck,
     color: "#4F46E5",
     bg: "bg-indigo-50 dark:bg-indigo-900/30",
   },

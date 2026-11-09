@@ -15,7 +15,7 @@ import {
   ChevronLeft,
   Send,
   Square,
-  Sparkles,
+  GraduationCap,
   BookOpen,
   Info,
   Mic,
@@ -388,7 +388,7 @@ export default function StudyRoomScreen() {
             ListEmptyComponent={
               <View className="flex-1 items-center justify-center px-4 py-12">
                 <View className="mb-4 h-16 w-16 items-center justify-center rounded-3xl bg-blue-50 dark:bg-blue-900/40">
-                  <Sparkles size={32} color={colors.primary} />
+                  <GraduationCap size={32} color={colors.primary} />
                 </View>
                 <Text className="mb-1 text-center text-xl font-inter-bold text-slate-900 dark:text-slate-50">
                   Your AI Study Room is Ready

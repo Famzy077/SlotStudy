@@ -20,7 +20,6 @@ import {
   FileText,
   Image as ImageIcon,
   BookOpen,
-  Sparkles,
   ArrowLeft,
   AlertCircle,
   Trash2,
@@ -414,10 +413,10 @@ export default function UploadMaterialScreen() {
                   title={
                     processMutation.isPending
                       ? "Generating Summary..."
-                      : "Generate AI Summary"
+                      : "Generate Summary"
                   }
                   variant="outline"
-                  icon={<Sparkles size={16} color="#2563EB" />}
+                  icon={<FileText size={16} color="#2563EB" />}
                   loading={processMutation.isPending}
                   onPress={() => {
                     if (materialId) {

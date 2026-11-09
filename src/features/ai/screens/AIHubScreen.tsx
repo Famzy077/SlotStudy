@@ -8,7 +8,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import {
   FileUp,
-  Sparkles,
+  GraduationCap,
   FileText,
   ChevronRight,
   RefreshCw,
@@ -133,7 +133,7 @@ export default function AIHubScreen() {
                 PDF, JPG, PNG images • Instant AI summary
               </Text>
             </View>
-            <Sparkles size={48} color="#FFFFFF" opacity={0.22} />
+            <FileUp size={48} color="#FFFFFF" opacity={0.22} />
           </View>
         </LinearGradient>
       </TouchableOpacity>
@@ -164,7 +164,7 @@ export default function AIHubScreen() {
                 Chat in English or Pidgin with your AI study buddy grounded in your handouts
               </Text>
             </View>
-            <Sparkles size={48} color="#FFFFFF" opacity={0.22} />
+            <GraduationCap size={48} color="#FFFFFF" opacity={0.22} />
           </View>
 
           <View className="mt-4 flex-row gap-3">
@@ -371,8 +371,8 @@ export default function AIHubScreen() {
       ) : (
         <EmptyState
           title="No summaries yet"
-          message="Upload a document to generate your first AI summary."
-          icon={<Sparkles size={36} color={colors.textSecondary} />}
+          message="Upload a document to generate your first study summary."
+          icon={<FileText size={36} color={colors.textSecondary} />}
           actionLabel="Upload Material"
           onAction={() => navigation.navigate("UploadMaterial", {})}
         />

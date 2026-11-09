@@ -12,7 +12,7 @@ import {
   ChevronLeft,
   FileText,
   MessageSquare,
-  Sparkles,
+  BookOpenCheck,
   Plus,
   Check,
   Image as ImageIcon,
@@ -429,7 +429,7 @@ const CourseDetailScreen = ({
                             }
                             size="sm"
                             variant={isFailed ? "outline" : "primary"}
-                            icon={<Sparkles size={14} color="#FFFFFF" />}
+                            icon={<FileText size={14} color="#FFFFFF" />}
                             className="flex-1"
                             loading={
                               processMaterial.isPending &&
@@ -472,7 +472,7 @@ const CourseDetailScreen = ({
 
           <View>
             <View className="mb-3 flex-row items-center">
-              <Sparkles size={20} color="#2563EB" />
+              <BookOpenCheck size={20} color="#2563EB" />
               <Text className="ml-2 text-xl font-inter-semibold text-slate-900 dark:text-slate-50">
                 Summaries and quizzes
               </Text>
@@ -539,7 +539,7 @@ const CourseDetailScreen = ({
                 <EmptyState
                   title="No summaries available"
                   message="Summaries will appear here after this course’s material has been processed."
-                  icon={<Sparkles size={36} color="#64748B" />}
+                  icon={<FileText size={36} color="#64748B" />}
                 />
               </View>
             )}

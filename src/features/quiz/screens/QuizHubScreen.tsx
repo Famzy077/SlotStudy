@@ -4,7 +4,7 @@ import {
   BookOpen,
   ChevronRight,
   FileText,
-  Sparkles,
+  Target,
 } from "lucide-react-native";
 import { ScreenWrapper } from "@/shared/components/layout/ScreenWrapper";
 import { Button } from "@/shared/components/ui/Button";
@@ -71,7 +71,7 @@ export default function QuizHubScreen({
 
       <View className="mb-8 rounded-3xl bg-primary p-6">
         <View className="mb-4 h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
-          <Sparkles size={24} color="#FFFFFF" />
+          <Target size={24} color="#FFFFFF" />
         </View>
         <Text className="mb-2 text-xl font-inter-bold text-white">
           Learn by testing yourself
@@ -189,7 +189,7 @@ export default function QuizHubScreen({
         <EmptyState
           title="No study material yet"
           message="Upload course material and generate a summary first. You can then create a quiz from it."
-          icon={<Sparkles size={36} color={colors.textSecondary} />}
+          icon={<BookOpen size={36} color={colors.textSecondary} />}
           actionLabel="Upload Material"
           onAction={() => navigation.navigate("UploadMaterial", {})}
         />

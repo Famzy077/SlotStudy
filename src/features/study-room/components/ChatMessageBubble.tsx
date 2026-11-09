@@ -4,7 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import {
   BookOpen,
   AlertCircle,
-  Sparkles,
+  GraduationCap,
   Volume2,
   VolumeX,
   Copy,
@@ -97,7 +97,7 @@ export const ChatMessageBubble: React.FC<Props> = ({
     <View className="mb-5 flex-row justify-start">
       <View className="max-w-[94%] rounded-3xl rounded-bl-sm border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800">
         <View className="mb-2.5 flex-row items-center gap-1.5">
-          <Sparkles size={15} color={colors.primary} />
+          <GraduationCap size={15} color={colors.primary} />
           <Text className="text-xs font-inter-semibold text-primary">
             SlotStudy AI Tutor
           </Text>

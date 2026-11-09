@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Trophy, Flame, BookOpen, Bell, Brain, ArrowLeft } from 'lucide-react-native';
+import { Trophy, Flame, BookOpen, Bell, Target, ArrowLeft } from 'lucide-react-native';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../hooks/useNotifications';
 import { LoadingSkeleton } from '@/shared/components/ui/LoadingSkeleton';
 import { EmptyState } from '@/shared/components/feedback/EmptyState';
@@ -27,7 +27,7 @@ export default function NotificationsScreen() {
       case 'achievement': return <Trophy size={24} className="text-yellow-500" />;
       case 'streak': return <Flame size={24} className="text-orange-500" />;
       case 'course': return <BookOpen size={24} className="text-blue-500" />;
-      case 'quiz': return <Brain size={24} className="text-purple-500" />;
+      case 'quiz': return <Target size={24} className="text-purple-500" />;
       case 'system':
       default: return <Bell size={24} className="text-slate-500" />;
     }

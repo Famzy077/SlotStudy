@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { BarChart3, ChevronRight, Clock, BookCheck, BrainCircuit } from 'lucide-react-native';
+import { BarChart3, ChevronRight, Clock, BookCheck, Target } from 'lucide-react-native';
 import type { ProgressData } from '@/features/progress/types/progress.types';
 
 interface Props {
@@ -71,7 +71,7 @@ export const HomeProgressSection = ({ progress, isLoading }: Props) => {
 
         <View className="flex-1 items-center rounded-2xl border border-slate-200/70 bg-white p-3 dark:border-slate-700/60 dark:bg-slate-800 shadow-sm">
           <View className="mb-1 h-7 w-7 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/30">
-            <BrainCircuit size={15} color="#F59E0B" />
+            <Target size={15} color="#F59E0B" />
           </View>
           <Text className="text-lg font-bold text-slate-900 dark:text-slate-50">
             {progress.totalQuizzesTaken ?? 0}

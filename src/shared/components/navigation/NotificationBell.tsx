@@ -7,7 +7,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { Bell, CheckCheck, X, Sparkles, UserCheck, MessageSquare } from 'lucide-react-native';
+import { Bell, CheckCheck, X, UserCheck, MessageSquare } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSocket, type SocketNotification } from '@/shared/hooks/useSocket';
 import { studyBuddyService } from '@/features/study-buddy/services/study-buddy.service';
@@ -37,7 +37,7 @@ export const NotificationBell: React.FC = () => {
   const renderIcon = (type: string) => {
     if (type.includes('friend')) return <UserCheck size={16} color="#4F46E5" />;
     if (type.includes('message')) return <MessageSquare size={16} color="#06B6D4" />;
-    return <Sparkles size={16} color="#F59E0B" />;
+    return <Bell size={16} color="#F59E0B" />;
   };
 
   return (
