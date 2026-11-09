@@ -17,6 +17,7 @@ import { useAuthStore } from "../store/auth.store";
 import {
   apiClient,
   getApiErrorMessage,
+  wakeServer,
 } from "@/shared/services/api.client";
 import { Button } from "@/shared/components/ui/Button";
 import { AppAlert as Alert } from "@/shared/components/feedback/AppAlert";
@@ -38,6 +39,10 @@ const LoginScreen = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const termsAcceptedRef = useRef(false);
   const passwordInputRef = useRef<any>(null);
+
+  useEffect(() => {
+    wakeServer();
+  }, []);
 
   // Load client IDs from .env with fallbacks to prevent crash if undefined
   const [request, response, promptAsync] = Google.useAuthRequest({

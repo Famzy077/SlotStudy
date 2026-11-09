@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { useAuthStore } from "../store/auth.store";
 import {
   apiClient,
   getApiErrorMessage,
+  wakeServer,
 } from "@/shared/services/api.client";
 import { Check, Eye, EyeOff } from "lucide-react-native";
 import type { AuthResponse } from "../types/auth.types";
@@ -31,6 +32,10 @@ const SignupScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+
+  useEffect(() => {
+    wakeServer();
+  }, []);
 
   const handleSignup = async () => {
     if (!form.name || !form.username || !form.email || !form.password) {
