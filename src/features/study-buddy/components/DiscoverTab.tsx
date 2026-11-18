@@ -266,7 +266,7 @@ export const DiscoverTab: React.FC = () => {
               <View className="py-4 items-center">
                 <ActivityIndicator size="small" color={colors.primary} />
               </View>
-            ) : null
+            ) : undefined
           }
           ListEmptyComponent={
             <View className="items-center justify-center py-16 px-6">

@@ -465,7 +465,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 <View className="py-2 items-center">
                   <ActivityIndicator size="small" color={colors.primary} />
                 </View>
-              ) : null
+              ) : undefined
             }
           />
         )}
